@@ -1,9 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import pdfParse from 'pdf-parse';
 import { neon } from '@neondatabase/serverless';
 import dotenv from 'dotenv';
+import { createRequire } from 'module';
+
+// Use require for CommonJS module (pdf-parse is CommonJS only)
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
 
 // Load environment variables
 dotenv.config();
