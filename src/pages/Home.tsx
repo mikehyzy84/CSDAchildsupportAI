@@ -20,20 +20,24 @@ const Home: React.FC = () => {
           <div className="mb-6">
             <div className="mx-auto mb-6 flex justify-center">
               <div className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md">
-                <div className="flex space-x-2">
-                  <div className="w-8 h-12 bg-blue-600 rounded-lg"></div>
-                  <div className="w-8 h-12 bg-yellow-400 rounded-lg"></div>
+                <div className="w-24 h-24 flex items-center justify-center">
+                  <img
+                    src="/csdai-logo.png"
+                    alt="CSDAI Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div className="text-left">
-                  <div className="text-2xl font-bold text-blue-600">CHILD SUPPORT</div>
-                  <div className="text-xl font-bold text-blue-600">DIRECTORS ASSOCIATION</div>
+                  <div className="text-2xl font-bold text-[#14558f]">CSDAI</div>
+                  <div className="text-lg font-semibold text-[#388557]">Child Support Directors</div>
+                  <div className="text-lg font-semibold text-[#388557]">Association Intelligence</div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            CSDA Policy Reference System
+            CSDAI — Child Support Directors Association Intelligence
           </h1>
           
           <p className="text-xl text-[#535353] mb-8 max-w-3xl mx-auto">
