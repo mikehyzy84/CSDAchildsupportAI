@@ -54,74 +54,14 @@ const SearchResultsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Search Results */}
         <div className="lg:col-span-2">
-          {/* Loading State */}
-          {isLoading ? (
-            <div className="space-y-6">
-              <div className="ma-card p-6">
-                <div className="animate-pulse">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
-                    <div className="flex-1 space-y-4">
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                      <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 rounded"></div>
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="ma-card p-6">
-                  <div className="animate-pulse">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-5 bg-gray-200 rounded-full w-20"></div>
-                    </div>
-                    <div className="space-y-2 mb-4">
-                      <div className="h-4 bg-gray-200 rounded"></div>
-                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                    <div className="flex space-x-3">
-                      <div className="h-9 bg-gray-200 rounded w-32"></div>
-                      <div className="h-9 bg-gray-200 rounded w-28"></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="ma-card p-6 bg-red-50 border-l-4 border-red-400">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                    <span className="text-red-600 text-xl">⚠️</span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-red-900 mb-2">
-                    Search Error
-                  </h3>
-                  <p className="text-red-800 mb-4">
-                    {error}
-                  </p>
-                  <p className="text-sm text-red-700">
-                    Please try again or contact support if the problem persists.
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <SearchResultsComponent
-              queryResponse={queryResponse}
-              citations={citations}
-              searchMode={searchMode}
-              searchQuery={query}
-            />
-          )}
+          <SearchResultsComponent
+            queryResponse={queryResponse}
+            citations={citations}
+            searchMode={searchMode}
+            searchQuery={query}
+            isLoading={isLoading}
+            error={error}
+          />
         </div>
 
         {/* AI Panel Sidebar */}
