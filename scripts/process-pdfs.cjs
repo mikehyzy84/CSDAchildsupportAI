@@ -100,9 +100,8 @@ async function processPdfs() {
 
   sqlStatements.push('-- Generated SQL INSERT statements for new documents and chunks');
   sqlStatements.push('-- Generated on: ' + new Date().toISOString());
+  sqlStatements.push('-- Note: Document IDs are auto-generated UUIDs by the database');
   sqlStatements.push('');
-
-  let documentId = 1000; // Start with a high number to avoid conflicts
 
   for (const config of pdfConfigs) {
     const pdfPath = path.join(__dirname, '..', config.file);
@@ -121,11 +120,10 @@ async function processPdfs() {
       const chunks = chunkText(text);
       console.log(`  Created ${chunks.length} chunks`);
 
-      // Generate INSERT statement for document
+      // Generate INSERT statement for document (UUID will be auto-generated)
       sqlStatements.push('-- Document: ' + config.title);
-      sqlStatements.push('INSERT INTO documents (id, title, source, source_url, section, status, created_at, updated_at)');
+      sqlStatements.push('INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)');
       sqlStatements.push('VALUES (');
-      sqlStatements.push(`  ${documentId},`);
       sqlStatements.push(`  ${escapeSqlString(config.title)},`);
       sqlStatements.push(`  ${escapeSqlString(config.source)},`);
       sqlStatements.push(`  ${config.sourceUrl ? escapeSqlString(config.sourceUrl) : 'NULL'},`);
@@ -136,12 +134,12 @@ async function processPdfs() {
       sqlStatements.push(');');
       sqlStatements.push('');
 
-      // Generate INSERT statements for chunks
+      // Generate INSERT statements for chunks (using subquery for document_id)
       chunks.forEach((chunk, index) => {
-        sqlStatements.push(`-- Chunk ${index + 1} of ${chunks.length} for document ${documentId}`);
+        sqlStatements.push(`-- Chunk ${index + 1} of ${chunks.length} for document: ${config.title}`);
         sqlStatements.push('INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)');
         sqlStatements.push('VALUES (');
-        sqlStatements.push(`  ${documentId},`);
+        sqlStatements.push(`  (SELECT id FROM documents WHERE title = ${escapeSqlString(config.title)}),`);
         sqlStatements.push(`  ${escapeSqlString(chunk)},`);
         sqlStatements.push(`  ${escapeSqlString(config.title)},`);
         sqlStatements.push(`  ${index},`);
@@ -150,8 +148,6 @@ async function processPdfs() {
         sqlStatements.push(');');
         sqlStatements.push('');
       });
-
-      documentId++;
 
     } catch (error) {
       console.error(`Error processing ${config.file}:`, error.message);

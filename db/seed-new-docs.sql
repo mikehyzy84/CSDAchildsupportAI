@@ -1,10 +1,10 @@
 -- Generated SQL INSERT statements for new documents and chunks
--- Generated on: 2026-02-07T17:18:32.396Z
+-- Generated on: 2026-02-07T17:28:36.769Z
+-- Note: Document IDs are auto-generated UUIDs by the database
 
 -- Document: Case Conflict of Interest Reporting Policy
-INSERT INTO documents (id, title, source, source_url, section, status, created_at, updated_at)
+INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)
 VALUES (
-  1000,
   'Case Conflict of Interest Reporting Policy',
   'county_policy',
   NULL,
@@ -14,10 +14,10 @@ VALUES (
   NOW()
 );
 
--- Chunk 1 of 4 for document 1000
+-- Chunk 1 of 4 for document: Case Conflict of Interest Reporting Policy
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1000,
+  (SELECT id FROM documents WHERE title = 'Case Conflict of Interest Reporting Policy'),
   'Policy:  
 Employees are required to complete a case conflict of interest reporting form. A conflict 
 case is any case in which any of the following are true in any county or region in the  
@@ -91,10 +91,10 @@ se.'),
   NOW()
 );
 
--- Chunk 2 of 4 for document 1000
+-- Chunk 2 of 4 for document: Case Conflict of Interest Reporting Policy
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1000,
+  (SELECT id FROM documents WHERE title = 'Case Conflict of Interest Reporting Policy'),
   'Note:  Should the employee become aware of a conflict case in the future, the employee 
 will fill out a “Case Conflict of Interest Reporting Form,” for each case, and return the  
   
@@ -142,10 +142,10 @@ becomes aware of new information.'),
   NOW()
 );
 
--- Chunk 3 of 4 for document 1000
+-- Chunk 3 of 4 for document: Case Conflict of Interest Reporting Policy
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1000,
+  (SELECT id FROM documents WHERE title = 'Case Conflict of Interest Reporting Policy'),
   'Sent:  
 To: 
 Subject: 
@@ -219,10 +219,10 @@ give the supervisor and/or manager the document or mail at the time you report t
   NOW()
 );
 
--- Chunk 4 of 4 for document 1000
+-- Chunk 4 of 4 for document: Case Conflict of Interest Reporting Policy
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1000,
+  (SELECT id FROM documents WHERE title = 'Case Conflict of Interest Reporting Policy'),
   'If the attempted access is due to working a phone call, interview, task, or some other type of case  
 work, you must provide the supervisor and/or manager with this information as the work will need to  
 be reassigned. Remember, if at any time you become aware of a conflict with a case or participant, you are to  
@@ -253,9 +253,8 @@ If you have any questions about this policy, please talk to your supervisor. Tha
 );
 
 -- Document: Initial Pleading Practices
-INSERT INTO documents (id, title, source, source_url, section, status, created_at, updated_at)
+INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)
 VALUES (
-  1001,
   'Initial Pleading Practices',
   'county_procedure',
   NULL,
@@ -265,10 +264,10 @@ VALUES (
   NOW()
 );
 
--- Chunk 1 of 14 for document 1001
+-- Chunk 1 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Initial Pleading Practices (IPP) 
  
  
@@ -320,10 +319,10 @@ calculation even when the radio button is selected.'),
   NOW()
 );
 
--- Chunk 2 of 14 for document 1001
+-- Chunk 2 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'We are choosing not to perform manual  
 calculating the proration based on both parties net disposable income. 1 
  
@@ -337,10 +336,10 @@ Updated: 01/06/2026.'),
   NOW()
 );
 
--- Chunk 3 of 14 for document 1001
+-- Chunk 3 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'o   The calculator defaults to the Proration radio button. All staff using the calculator on 
  
 and after 9/1/2024, and calculating add-ons, will need to manually change to the  
@@ -424,10 +423,10 @@ resolve the dispute.'),
   NOW()
 );
 
--- Chunk 4 of 14 for document 1001
+-- Chunk 4 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Note: The PRS does not have the option to file a  
 response to the complaint; therefore, the parenting  
 time is based on the PRS’s claim. Base guideline child support on the timeshare verified  
@@ -457,10 +456,10 @@ we verify this with the employer..'),
   NOW()
 );
 
--- Chunk 5 of 14 for document 1001
+-- Chunk 5 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Updated: 01/06/2026  
  
  
@@ -638,10 +637,10 @@ CalWORKS grant as income.'),
   NOW()
 );
 
--- Chunk 6 of 14 for document 1001
+-- Chunk 6 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Base guideline child support on the party’s  
 SSA benefits and any other reported income, 
   
@@ -663,10 +662,10 @@ Derivative Benefits for more.'),
   NOW()
 );
 
--- Chunk 7 of 14 for document 1001
+-- Chunk 7 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Updated: 01/06/2026  
  
  
@@ -910,10 +909,10 @@ monthly earnings in wages of $1,000.00'),
   NOW()
 );
 
--- Chunk 8 of 14 for document 1001
+-- Chunk 8 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   '5 
  
 Updated: 01/06/2026  
@@ -1001,10 +1000,10 @@ week..'),
   NOW()
 );
 
--- Chunk 9 of 14 for document 1001
+-- Chunk 9 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Updated: 01/06/2026  
  
  
@@ -1140,10 +1139,10 @@ occupation is known...'),
   NOW()
 );
 
--- Chunk 10 of 14 for document 1001
+-- Chunk 10 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Then  
 Calculate guideline child support based on  
 earning capacity of 40 hours per week at the  
@@ -1181,10 +1180,10 @@ current minimum wage rate..'),
   NOW()
 );
 
--- Chunk 11 of 14 for document 1001
+-- Chunk 11 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Updated: 01/06/2026  
  
  
@@ -1292,10 +1291,10 @@ appropriate action. • A zero judgment should not be obtained based solely on a
   NOW()
 );
 
--- Chunk 12 of 14 for document 1001
+-- Chunk 12 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'If  
 Any of the following apply:  
 • The PPS is expected to be incarcerated for  
@@ -1351,10 +1350,10 @@ zero income..'),
   NOW()
 );
 
--- Chunk 13 of 14 for document 1001
+-- Chunk 13 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   '*Cash Aid Program for Immigrants (CAPI): CAPI is a 100 percent state-funded program  
 designed to provide   monthly cash benefits to aged, blind, and disabled non-citizens who are  
  
@@ -1438,10 +1437,10 @@ based on zero income.'),
   NOW()
 );
 
--- Chunk 14 of 14 for document 1001
+-- Chunk 14 of 14 for document: Initial Pleading Practices
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1001,
+  (SELECT id FROM documents WHERE title = 'Initial Pleading Practices'),
   'Base guideline child support on the party’s  
 zero income. Note: If a party receives SSI/SSP/Cash Aid  If parentage has been established:  
 Program for Immigrants (CAPI)* benefits and  
@@ -1478,9 +1477,8 @@ Updated: 01/06/2026'),
 );
 
 -- Document: Calculating Guideline Child Support
-INSERT INTO documents (id, title, source, source_url, section, status, created_at, updated_at)
+INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)
 VALUES (
-  1002,
   'Calculating Guideline Child Support',
   'county_procedure',
   NULL,
@@ -1490,10 +1488,10 @@ VALUES (
   NOW()
 );
 
--- Chunk 1 of 29 for document 1002
+-- Chunk 1 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 1 of 13 
  
  
@@ -1579,10 +1577,10 @@ and non-itemizing taxpayers. If married, a joint filing is required to claim the
   NOW()
 );
 
--- Chunk 2 of 29 for document 1002
+-- Chunk 2 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Increase to Limitation on Itemized Deduction for State and Local Taxes  
 Individuals who itemize their deductions can claim up to $40,000 or $20,000 if married filing separately for state and local taxes paid. This limit was increased  from $10,000 or 
 $5,000 if married filing separately. The deduction phases out for taxpayers with income over $500,000 or $250,000 if married filing  
@@ -1618,10 +1616,10 @@ modification. Determining the PPS''s financial ability is a key factor.'),
   NOW()
 );
 
--- Chunk 3 of 29 for document 1002
+-- Chunk 3 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Please refer to the Initial Pleading Practices (IPP) for details about the department''s order setting  practices. It is the intent of this policy to recognize the PPS''s responsibility of paying support and maximize the amount of support that can be collected based on PPS''s  ability to pay. Creating unrealistic child support orders contributes to substantial arrears impacting low wage earners with overwhelming child support  obligations. Consequently, this contributes 
 to a negative impact in the parent-child relationship. It is imperative that the correct type of income is selected and identified on the Summons and Complaint and Proposed Judgment. Every effort should be  made to identify actual 
 income when calculating child support. Earning capacity should only be used in specific situations. Gathering Information  
@@ -1643,10 +1641,10 @@ Intranet link 2/4/2026.'),
   NOW()
 );
 
--- Chunk 4 of 29 for document 1002
+-- Chunk 4 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 2 of 13  
  
  
@@ -1760,10 +1758,10 @@ Any kind of benefit that you know of?
   NOW()
 );
 
--- Chunk 5 of 29 for document 1002
+-- Chunk 5 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'If yes to any of the above: How much is the amount received and when did it start?   
 What is the usual occupation of Mr./Ms. (Name)?   
 Does Mr./Ms. (Name) have a driver''s license? If so, what state issued the license?   
@@ -1801,10 +1799,10 @@ confirm we locate the correct individual.'),
   NOW()
 );
 
--- Chunk 6 of 29 for document 1002
+-- Chunk 6 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'l  
 l  
 l  
@@ -1864,10 +1862,10 @@ These additional sources previously listed will help to obtain information regar
   NOW()
 );
 
--- Chunk 7 of 29 for document 1002
+-- Chunk 7 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'You must also contact the PRS 
 and PPS to confirm or clarify information needed prior to proceeding with an S&C. Intranet link 2/4/2026.',
   'Calculating Guideline Child Support',
@@ -1877,10 +1875,10 @@ and PPS to confirm or clarify information needed prior to proceeding with an S&C
   NOW()
 );
 
--- Chunk 8 of 29 for document 1002
+-- Chunk 8 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child Support Page 3 of 13  
  
  
@@ -1914,10 +1912,10 @@ of the cases, bringing the other absent parent into the calculation using the "O
   NOW()
 );
 
--- Chunk 9 of 29 for document 1002
+-- Chunk 9 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'You will be prompted by the   
 Guideline Calculator to set the "Apply Low income Adjustment field to "Yes."  
 l VISITATION: Use the actual visitation percentage. When actual income and the visitation percentage is none or unknown, use zero percent. l HEALTH INSURANCE: If the cost of health insurance is known AND the LIA does not apply, whether or not the PPS has the children currently covered,  
@@ -1947,10 +1945,10 @@ Note: A Court Caption must exist prior to adding a guideline calculation
   NOW()
 );
 
--- Chunk 10 of 29 for document 1002
+-- Chunk 10 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'From the Case Overview Screen, click the Legal Activities local link. 2. On the Legal activities Page, click the Guideline Support Calculation List detail link. 3. This takes you to the Guideline Support Calculation List. 4. The Guideline Support Calculation list displays previously saved calculations. 5. To add a new calculation, click the “Add” button. This will take you to the Guideline Support Calculation Detail screen. Intranet link 2/4/2026.
 
 Calculating Guideline Child_Support Page 4 of 13  
@@ -2074,10 +2072,10 @@ Intranet link 2/4/2026'),
   NOW()
 );
 
--- Chunk 11 of 29 for document 1002
+-- Chunk 11 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support  
  
  
@@ -2147,10 +2145,10 @@ Click the Select link to begin the process of setting the other parent as PPS.')
   NOW()
 );
 
--- Chunk 12 of 29 for document 1002
+-- Chunk 12 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'This will take you to a case search screen. Search for the case where the other parent is listed as the PPS. The search results page will display the case and the PPS name. From that page, click the Select button. This will bring the other parent’s 
 name into the case as the 2
 nd
@@ -2184,10 +2182,10 @@ This section lists information regarding Federal Income Taxes. The boxes will be
   NOW()
 );
 
--- Chunk 13 of 29 for document 1002
+-- Chunk 13 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'The three fields 
 that indicate the number of children for special exemptions are the most important. These fields default to the number of  children in the case for the other parent. If PPS has children 
 that qualify for these deductions or the Other Parent has additional children that should be added,  the number must be changed manually. l Number of Children for Child Care Credit  
@@ -2207,10 +2205,10 @@ Intranet link 2/4/2026.'),
   NOW()
 );
 
--- Chunk 14 of 29 for document 1002
+-- Chunk 14 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support  
  
  
@@ -2260,10 +2258,10 @@ the Other State Tax Rate field.'),
   NOW()
 );
 
--- Chunk 15 of 29 for document 1002
+-- Chunk 15 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'l  
 l  
 l  
@@ -2319,10 +2317,10 @@ Note: To view options you must click on the expand + button. ¡ Presumed Income 
   NOW()
 );
 
--- Chunk 16 of 29 for document 1002
+-- Chunk 16 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'When checked, indicates that the income for the and, if applicable, Other Parent is unknown and the support calculation is using presumed  income. Note:  If presumed Income is being used, checking the "Presumed Income" box will populate the hours per week and minimum wage box per the most current wage 
 scale. ¡  
  
@@ -2402,10 +2400,10 @@ Intranet link 2/4/2026.'),
   NOW()
 );
 
--- Chunk 17 of 29 for document 1002
+-- Chunk 17 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 7 of 13  
  
  
@@ -2515,10 +2513,10 @@ To open and view the options you must click the expand (+) button. This section 
   NOW()
 );
 
--- Chunk 18 of 29 for document 1002
+-- Chunk 18 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'l  
 l  
 l  
@@ -2644,10 +2642,10 @@ SSA   Other Taxable Income.'),
   NOW()
 );
 
--- Chunk 19 of 29 for document 1002
+-- Chunk 19 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 8 of 13  
  
  
@@ -2749,10 +2747,10 @@ information needs to be entered you must click on the Expand Button to view the 
   NOW()
 );
 
--- Chunk 20 of 29 for document 1002
+-- Chunk 20 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'l Mandatory Retirement (Tax-Deferred)  
 Other Retirement Contributions:  
 l Mandatory Retirement (Non-Tax-Deferred)   
@@ -2834,10 +2832,10 @@ Intranet link 2/4/2026'),
   NOW()
 );
 
--- Chunk 21 of 29 for document 1002
+-- Chunk 21 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support  
  
  
@@ -2957,10 +2955,10 @@ entering hardship children. Leave the Computation Method for Hardship to the def
   NOW()
 );
 
--- Chunk 22 of 29 for document 1002
+-- Chunk 22 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Notes: Unless we obtain information the child has a parent who is incarcerated, deceased, or there is an order but no payments, then only a half (0.5)  hardship credit should be 
 applied. If we have/obtain information that a child has a parent who is incarcerated, deceased, or there is an order but no payments, or the party has been granted  Good Cause for the 
 hardship child(ren), then a full (1.0) hardship credit can be applied. if the custodial parent of the hardship child(ren) has not attempted to obtain a child support order (and the 
@@ -3000,10 +2998,10 @@ The Child Support Add-on section allows you to enter additional child support co
   NOW()
 );
 
--- Chunk 23 of 29 for document 1002
+-- Chunk 23 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'l FEM Final Rule Update   
 ¡  The Guideline Calculator settings now allow for a proration to be identified when requesting an order with add-ons such as childcare expenses   
 and unreimbursed medical expenses. ¡ We will continue to use the 50/50 allocation of add-ons when using the Guideline Calculator. l  The Guideline Calculator is not currently designed to automatically do the proration calculation even when the radio button is selected. We   
@@ -3021,10 +3019,10 @@ but it can affect tax information and amounts credited for hardship children. In
   NOW()
 );
 
--- Chunk 24 of 29 for document 1002
+-- Chunk 24 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 10 of 13  
  
  
@@ -3134,10 +3132,10 @@ Yes - This selection should be made if the net income is less than $2,929.00 and
   NOW()
 );
 
--- Chunk 25 of 29 for document 1002
+-- Chunk 25 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'No - This selection can be made if the LIA should not be applied, even if the net income is less than $2,929.00. l  
  
 Calculate Temporary Spousal Support: The options to this field should only be used if spousal support will be calculated in the calculation. This office  
@@ -3165,10 +3163,10 @@ only files. Active calculations will remain on the system permanently. Save the 
   NOW()
 );
 
--- Chunk 26 of 29 for document 1002
+-- Chunk 26 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'After selecting the status, click the Save button to save the calculation. If an existing draft calculation has been modified, the new results can be saved as a new calculation by using the Save as New Calculation button. This will preserve the old 
 calculation and write a new file with the new information. After a calculation has been saved, it can be viewed and accessed again from the Guideline Support Calculation List page. + Viewing / Modifying an Existing Calculation 
 1. 2. 3. 4. 5. To view an existing calculation, access the Guideline Support Calculation list page. The list shows the date, children, tax year, total monthly support amount, and status of each calculation that has been saved in the case. To view the input information, click on the link of the date and time of the calculation. This will take you to the Guideline Support Calculation Detail page. Draft 
@@ -3192,10 +3190,10 @@ PPS was the requesting party, RAA will need to be initiated in all cases. If we 
   NOW()
 );
 
--- Chunk 27 of 29 for document 1002
+-- Chunk 27 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Calculating Guideline Child_Support Page 11 of 13  
  
  
@@ -3223,10 +3221,10 @@ the action is requesting a $0.00 order. In these situations, a $0.00 When genera
   NOW()
 );
 
--- Chunk 28 of 29 for document 1002
+-- Chunk 28 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Scroll to the 
 bottom of the page and use the Status drop down button to select "Active". Click the Save button. This will take you to the Guideline Support Calculation List page with a confirmation notice. + Absent Mother - Multiple 
 Dads   
@@ -3282,10 +3280,10 @@ Caption" detail screen. + Adding an "Other Related IV-D Case"
   NOW()
 );
 
--- Chunk 29 of 29 for document 1002
+-- Chunk 29 of 29 for document: Calculating Guideline Child Support
 INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
 VALUES (
-  1002,
+  (SELECT id FROM documents WHERE title = 'Calculating Guideline Child Support'),
   'Intranet link 2/4/2026 
  
 Case #1 PPS 
