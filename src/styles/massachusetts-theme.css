@@ -17,23 +17,23 @@
 }
 
 .ma-btn-primary {
-  @apply bg-[var(--ma-primary-blue)] hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply bg-csdai-sky hover:bg-csdai-sky/90 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-csdai-sky focus:ring-offset-2;
 }
 
 .ma-btn-secondary {
-  @apply bg-[var(--ma-light-blue)] hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2;
+  @apply bg-csdai-emerald hover:bg-csdai-emerald/90 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-csdai-emerald focus:ring-offset-2;
 }
 
 .ma-btn-outline {
-  @apply border-2 border-[var(--ma-primary-blue)] text-[var(--ma-primary-blue)] hover:bg-[var(--ma-primary-blue)] hover:text-white font-medium py-2 px-4 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply border-2 border-csdai-sky text-csdai-sky hover:bg-csdai-sky hover:text-white font-medium py-2 px-4 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-csdai-sky focus:ring-offset-2;
 }
 
 .ma-card {
-  @apply bg-white rounded-lg shadow-md border border-gray-200 transition-shadow duration-200 hover:shadow-lg;
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 transition-shadow duration-200;
 }
 
 .ma-input {
-  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-csdai-sky focus:border-transparent;
 }
 
 .ma-header-bg {

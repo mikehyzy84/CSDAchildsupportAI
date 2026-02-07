@@ -41,7 +41,7 @@ const Analytics: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 text-csdai-sky animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading analytics...</p>
         </div>
       </div>
@@ -69,8 +69,8 @@ const Analytics: React.FC = () => {
         <div className="ma-card p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Search className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-csdai-sky/10 rounded-lg flex items-center justify-center">
+                <Search className="h-6 w-6 text-csdai-sky" />
               </div>
             </div>
             <div className="ml-4">
@@ -83,8 +83,8 @@ const Analytics: React.FC = () => {
         <div className="ma-card p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+              <div className="w-12 h-12 bg-csdai-emerald/10 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-csdai-emerald" />
               </div>
             </div>
             <div className="ml-4">
@@ -97,8 +97,8 @@ const Analytics: React.FC = () => {
         <div className="ma-card p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Activity className="h-6 w-6 text-purple-600" />
+              <div className="w-12 h-12 bg-csdai-sky/10 rounded-lg flex items-center justify-center">
+                <Activity className="h-6 w-6 text-csdai-sky" />
               </div>
             </div>
             <div className="ml-4">
@@ -111,8 +111,8 @@ const Analytics: React.FC = () => {
         <div className="ma-card p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-orange-600" />
+              <div className="w-12 h-12 bg-csdai-emerald/10 rounded-lg flex items-center justify-center">
+                <Users className="h-6 w-6 text-csdai-emerald" />
               </div>
             </div>
             <div className="ml-4">
@@ -142,7 +142,7 @@ const Analytics: React.FC = () => {
                     <span className="text-sm font-medium text-gray-900">{question.count}</span>
                     <div className="w-20 bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full"
+                        className="bg-csdai-sky h-2 rounded-full"
                         style={{ width: `${(question.count / top_questions[0].count) * 100}%` }}
                       ></div>
                     </div>
@@ -174,7 +174,7 @@ const Analytics: React.FC = () => {
                     <span className="text-sm font-medium text-gray-900">{activity.searches}</span>
                     <div className="w-24 bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-green-600 h-3 rounded-full"
+                        className="bg-csdai-emerald h-3 rounded-full"
                         style={{ width: `${(activity.searches / Math.max(...user_activity.map(a => a.searches))) * 100}%` }}
                       ></div>
                     </div>
@@ -209,7 +209,7 @@ const Analytics: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-gray-600">Satisfaction Rate</span>
-              <span className="text-sm font-medium text-blue-600">
+              <span className="text-sm font-medium text-csdai-sky">
                 {count_good_feedback + count_bad_feedback > 0
                   ? `${Math.round((count_good_feedback / (count_good_feedback + count_bad_feedback)) * 100)}%`
                   : 'N/A'}

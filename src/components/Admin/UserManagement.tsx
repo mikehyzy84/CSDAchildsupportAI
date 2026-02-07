@@ -79,7 +79,7 @@ const UserManagement: React.FC = () => {
             <div className="text-sm text-gray-600">License Usage</div>
             <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
               <div
-                className="bg-blue-600 h-2 rounded-full"
+                className="bg-csdai-sky h-2 rounded-full"
                 style={{ width: `${(licenseUsage.used / licenseUsage.total) * 100}%` }}
               ></div>
             </div>
@@ -97,7 +97,7 @@ const UserManagement: React.FC = () => {
 
       {/* Add User Form */}
       {showAddForm && (
-        <div className="ma-card p-6 border-l-4 border-blue-500">
+        <div className="ma-card p-6 border-l-4 border-csdai-sky">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Add New User</h3>
           <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -215,7 +215,7 @@ const UserManagement: React.FC = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleEditUser(user)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-csdai-sky hover:text-csdai-sky/80"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>

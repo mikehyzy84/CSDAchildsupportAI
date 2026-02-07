@@ -109,13 +109,14 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Reports Generator</h1>
-        <p className="text-gray-600">
-          Generate comprehensive reports with policy citations and county-specific guidance
-        </p>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-csdai-navy mb-2">Reports Generator</h1>
+          <p className="text-gray-600">
+            Generate comprehensive reports with policy citations and county-specific guidance
+          </p>
+        </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Policy Selection */}
@@ -158,7 +159,7 @@ const Reports: React.FC = () => {
                   key={policy.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${
                     selectedPolicies.includes(policy.id)
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-csdai-sky bg-csdai-sky/10'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handlePolicyToggle(policy.id)}
@@ -168,7 +169,7 @@ const Reports: React.FC = () => {
                       type="checkbox"
                       checked={selectedPolicies.includes(policy.id)}
                       onChange={() => handlePolicyToggle(policy.id)}
-                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="mt-1 h-4 w-4 text-csdai-sky focus:ring-csdai-sky border-gray-300 rounded"
                     />
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -317,12 +318,12 @@ const Reports: React.FC = () => {
                   setSelectedPolicies(['1', '2', '9']);
                   setSourceFilter('California');
                 }}
-                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200"
+                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-csdai-sky hover:bg-csdai-sky/10 transition-colors duration-200"
               >
                 <div className="font-medium text-gray-900">Legal Framework Report</div>
                 <div className="text-sm text-gray-600">Focus on statutes and guidelines</div>
               </button>
-              
+
               <button
                 onClick={() => {
                   setReportTitle('County Implementation Guide');
@@ -330,12 +331,12 @@ const Reports: React.FC = () => {
                   setSelectedPolicies(californiaCounties.slice(0, 3).map(c => `county-${c.code}`));
                   setSourceFilter('County');
                 }}
-                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200"
+                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-csdai-sky hover:bg-csdai-sky/10 transition-colors duration-200"
               >
                 <div className="font-medium text-gray-900">County Guide Report</div>
                 <div className="text-sm text-gray-600">Focus on county-specific procedures</div>
               </button>
-              
+
               <button
                 onClick={() => {
                   setReportTitle('Federal and State Coordination Manual');
@@ -343,7 +344,7 @@ const Reports: React.FC = () => {
                   setSelectedPolicies(['11', '12', '13', '1', '3', '4']);
                   setSourceFilter('all');
                 }}
-                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200"
+                className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-csdai-sky hover:bg-csdai-sky/10 transition-colors duration-200"
               >
                 <div className="font-medium text-gray-900">Federal-State Manual</div>
                 <div className="text-sm text-gray-600">Combined federal and state guidance</div>
@@ -351,6 +352,7 @@ const Reports: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

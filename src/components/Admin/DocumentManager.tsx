@@ -249,9 +249,9 @@ const DocumentManager: React.FC = () => {
           {samplePolicies.slice(0, 5).map((policy) => (
             <div key={policy.id} className="flex items-center space-x-4 p-3 border rounded-lg">
               <div className="flex-shrink-0">
-                <FileText className="h-8 w-8 text-blue-600" />
+                <FileText className="h-8 w-8 text-csdai-sky" />
               </div>
-              
+
               <div className="flex-1">
                 <h4 className="font-medium text-gray-900">{policy.title}</h4>
                 <div className="flex items-center space-x-4 text-sm text-gray-600">
@@ -262,9 +262,9 @@ const DocumentManager: React.FC = () => {
                   <span>Effective: {new Date(policy.effective_date).toLocaleDateString()}</span>
                 </div>
               </div>
-              
+
               <div className="flex-shrink-0">
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                <span className="px-2 py-1 bg-csdai-emerald/20 text-csdai-emerald rounded-full text-xs font-medium">
                   Current
                 </span>
               </div>
