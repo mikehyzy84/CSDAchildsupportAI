@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-[#14558f] text-white shadow-lg">
+    <header className="bg-csdai-navy text-white shadow-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
@@ -23,26 +23,31 @@ const Header: React.FC = () => {
               <img
                 src="/CSDAI Logo.png"
                 alt="CSDAI Logo"
-                className="h-14 w-auto object-contain"
+                className="h-12 w-auto object-contain"
               />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 hidden sm:block">
               <h1 className="text-xl font-bold">CSDAI</h1>
-              <p className="text-sm text-white opacity-90 whitespace-nowrap">Child Support Directors Association Intelligence</p>
+              <p className="text-sm text-white/90 whitespace-nowrap">Child Support Directors Association Intelligence</p>
             </div>
           </div>
 
+          {/* Disclaimer Pill */}
+          <div className="hidden xl:flex items-center px-3 py-1.5 bg-csdai-amber/20 border border-csdai-amber/30 rounded-full">
+            <span className="text-xs text-csdai-amber font-medium">Policy guidance only — not legal advice</span>
+          </div>
+
           {/* Navigation */}
-          <nav className="hidden md:flex items-center flex-1 justify-center">
-            <div className="flex items-center space-x-8">
+          <nav className="hidden md:flex items-center">
+            <div className="flex items-center space-x-2">
             {navItems.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
                 to={path}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 h-10 whitespace-nowrap ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                   location.pathname === path
-                    ? 'bg-white/20 text-white'
-                    : 'text-white opacity-80 hover:bg-white/10 hover:text-white hover:opacity-100'
+                    ? 'bg-csdai-sky text-white'
+                    : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
               >
                   <Icon className="h-[18px] w-[18px] flex-shrink-0" />
