@@ -56,6 +56,15 @@ export default async function handler(
   try {
     const { question, userEmail, sessionId, responseType = 'summary' } = req.body as ChatRequest;
 
+    // DEBUG: Log incoming request
+    console.log('=== CHAT API REQUEST ===');
+    console.log('Question received:', question);
+    console.log('Session ID:', sessionId);
+    console.log('User email:', userEmail);
+    console.log('Response type:', responseType);
+    console.log('Request body:', JSON.stringify(req.body));
+    console.log('========================');
+
     // Validate required fields
     if (!question || !sessionId) {
       return res.status(400).json({
@@ -98,6 +107,12 @@ export default async function handler(
         ORDER BY rank DESC
         LIMIT 8
       `;
+
+      // DEBUG: Log search results
+      console.log('=== DATABASE SEARCH RESULTS ===');
+      console.log('Number of results:', searchResults?.length || 0);
+      console.log('Results:', JSON.stringify(searchResults, null, 2));
+      console.log('================================');
     } catch (dbError) {
       console.error('Database search error:', dbError);
       // Return a friendly error instead of failing
@@ -111,6 +126,10 @@ export default async function handler(
 
     // Handle no results case
     if (!searchResults || searchResults.length === 0) {
+      console.log('=== NO RESULTS FOUND ===');
+      console.log('Returning no results response');
+      console.log('========================');
+
       const noResultsAnswer = "I couldn't find relevant policy guidance for your question. Please try rephrasing your question or contact your local child support office for specific guidance.\n\nThis is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team.";
 
       // Try to log the interaction (but don't fail if logging fails)
@@ -161,6 +180,7 @@ Content: ${result.content}
     // Call Anthropic API with error handling
     let answer: string;
     try {
+      console.log('=== CALLING ANTHROPIC API ===');
       console.log('Calling Anthropic API with model: claude-sonnet-4-20250514');
       console.log('Question:', question);
       console.log('Context length:', context.length);
@@ -186,6 +206,7 @@ Remember to cite sources and end with the required disclaimer.`
       });
 
       console.log('Anthropic API response received successfully');
+      console.log('=============================');
 
       // Extract answer from Anthropic response
       answer = message.content[0].type === 'text'
@@ -229,11 +250,20 @@ Remember to cite sources and end with the required disclaimer.`
     }
 
     // Return response
-    return res.status(200).json({
+    const finalResponse = {
       answer,
       citations,
       sessionId
-    });
+    };
+
+    // DEBUG: Log final response
+    console.log('=== FINAL RESPONSE ===');
+    console.log('Answer length:', answer?.length || 0);
+    console.log('Number of citations:', citations?.length || 0);
+    console.log('Full response:', JSON.stringify(finalResponse, null, 2));
+    console.log('======================');
+
+    return res.status(200).json(finalResponse);
 
   } catch (error) {
     console.error('Chat API error:', error);
