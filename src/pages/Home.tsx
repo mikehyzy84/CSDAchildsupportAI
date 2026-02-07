@@ -15,22 +15,18 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24">
-        {/* Hero Section - No duplicate title */}
+        {/* Hero Section - Simplified */}
         <div className="text-center mb-10">
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Search federal and state child support policies, guidelines, and procedures.
             Get intelligent summaries with policy citations to help you provide accurate guidance.
           </p>
         </div>
 
-        {/* Feature Cards with New Colors */}
+        {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-csdai-sky/10 rounded-lg flex items-center justify-center mb-4">
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
               <span className="text-2xl">🔍</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Smart Search</h3>
@@ -41,8 +37,6 @@ const Home: React.FC = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-csdai-emerald/10 rounded-lg flex items-center justify-center mb-4">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
               <span className="text-2xl">📋</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Summaries & Steps</h3>
@@ -53,8 +47,6 @@ const Home: React.FC = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-csdai-sky/10 rounded-lg flex items-center justify-center mb-4">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
               <span className="text-2xl">💼</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Team Annotations</h3>
@@ -64,13 +56,12 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Search Interface */}
         {/* Search Interface - Prominent Placement */}
         <div className="flex justify-center mb-16">
           <SearchBox onSearch={handleSearch} isLoading={isLoading} />
         </div>
 
-        {/* Quick Stats with New Colors */}
+        {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
             <div className="text-3xl font-bold text-csdai-sky mb-1">50+</div>
@@ -86,22 +77,6 @@ const Home: React.FC = () => {
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-csdai-emerald mb-1">24/7</div>
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-[#14558f] mb-1">50+</div>
-            <div className="text-sm text-gray-600">California Counties</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-[#388557] mb-1">5,000+</div>
-            <div className="text-sm text-gray-600">Policy Documents</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-[#43956f] mb-1">1,200+</div>
-            <div className="text-sm text-gray-600">Active Members</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-[#14558f] mb-1">24/7</div>
             <div className="text-sm text-gray-600">Access Available</div>
           </div>
         </div>
