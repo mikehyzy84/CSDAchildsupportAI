@@ -108,6 +108,14 @@ export default async function handler(
         LIMIT 8
       `;
 
+      // DEBUG: Log raw SQL result
+      console.log('=== RAW SQL RESULT ===');
+      console.log('Type:', typeof searchResults);
+      console.log('Is array:', Array.isArray(searchResults));
+      console.log('Keys:', Object.keys(searchResults || {}));
+      console.log('Raw value:', JSON.stringify(searchResults).substring(0, 500));
+      console.log('Rows property:', JSON.stringify((searchResults as any).rows)?.substring(0, 500));
+
       // DEBUG: Log search results
       console.log('=== DATABASE SEARCH RESULTS ===');
       console.log('Number of results:', searchResults?.length || 0);
