@@ -5,10 +5,10 @@ import { useSearch } from '../hooks/useSearch';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { search, isLoading } = useSearch();
+  const { isLoading } = useSearch();
 
   const handleSearch = (query: string, mode: 'summary' | 'steps') => {
-    search(query, mode);
+    // Navigate to SearchResults page - it will handle the API call via useEffect
     navigate(`/search?q=${encodeURIComponent(query)}&mode=${mode}`);
   };
 
