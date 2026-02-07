@@ -13,74 +13,71 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f2f2f2]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            CSDAI — Child Support Directors Association Intelligence
-          </h1>
-          
-          <p className="text-xl text-[#535353] mb-8 max-w-3xl mx-auto">
-            Search federal and state child support policies, guidelines, and procedures. 
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24">
+        {/* Hero Section - Simplified */}
+        <div className="text-center mb-10">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Search federal and state child support policies, guidelines, and procedures.
             Get intelligent summaries with policy citations to help you provide accurate guidance.
           </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-[#14558f] rounded-lg flex items-center justify-center mb-4 mx-auto">
-                <span className="text-white font-semibold text-lg">🔍</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Smart Search</h3>
-              <p className="text-sm text-[#535353]">
-                Natural language queries return relevant policies with highlighted matches
-              </p>
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-2xl">🔍</span>
             </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-[#388557] rounded-lg flex items-center justify-center mb-4 mx-auto">
-                <span className="text-white font-semibold text-lg">📋</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Summaries & Steps</h3>
-              <p className="text-sm text-[#535353]">
-                Choose between quick summaries or detailed step-by-step instructions
-              </p>
+            <h3 className="font-semibold text-gray-900 mb-2">Smart Search</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Natural language queries return relevant policies with highlighted matches
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-2xl">📋</span>
             </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-[#43956f] rounded-lg flex items-center justify-center mb-4 mx-auto">
-                <span className="text-white font-semibold text-lg">💼</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Team Annotations</h3>
-              <p className="text-sm text-[#535353]">
-                Add notes and share knowledge with your team for better case management
-              </p>
+            <h3 className="font-semibold text-gray-900 mb-2">Summaries & Steps</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Choose between quick summaries or detailed step-by-step instructions
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-2xl">💼</span>
             </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Team Annotations</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Add notes and share knowledge with your team for better case management
+            </p>
           </div>
         </div>
 
-        {/* Search Interface */}
-        <div className="flex justify-center">
+        {/* Search Interface - Prominent Placement */}
+        <div className="flex justify-center mb-16">
           <SearchBox onSearch={handleSearch} isLoading={isLoading} />
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#14558f]">50+</div>
-            <div className="text-sm text-[#535353]">California Counties</div>
+            <div className="text-3xl font-bold text-[#14558f] mb-1">50+</div>
+            <div className="text-sm text-gray-600">California Counties</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#388557]">5,000+</div>
-            <div className="text-sm text-[#535353]">Policy Documents</div>
+            <div className="text-3xl font-bold text-[#388557] mb-1">5,000+</div>
+            <div className="text-sm text-gray-600">Policy Documents</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#43956f]">1,200+</div>
-            <div className="text-sm text-[#535353]">Active Members</div>
+            <div className="text-3xl font-bold text-[#43956f] mb-1">1,200+</div>
+            <div className="text-sm text-gray-600">Active Members</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#14558f]">24/7</div>
-            <div className="text-sm text-[#535353]">Access Available</div>
+            <div className="text-3xl font-bold text-[#14558f] mb-1">24/7</div>
+            <div className="text-sm text-gray-600">Access Available</div>
           </div>
         </div>
       </div>
