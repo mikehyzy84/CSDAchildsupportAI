@@ -28,12 +28,12 @@ interface ChatRequest {
 }
 
 interface SearchResult {
-  chunk_id: string;
+  id: string;
   document_id: string;
   content: string;
   section_title: string;
   chunk_index: number;
-  document_title: string;
+  title: string;
   source: string;
   source_url: string;
   rank: number;
@@ -77,12 +77,12 @@ export default async function handler(
     try {
       searchResults = await sql<SearchResult[]>`
         SELECT
-          c.id as chunk_id,
+          c.id,
           c.document_id,
           c.content,
           c.section_title,
           c.chunk_index,
-          d.title as document_title,
+          d.title,
           d.source,
           d.source_url,
           ts_rank(c.search_vector, websearch_to_tsquery('english', ${question})) as rank
@@ -91,7 +91,7 @@ export default async function handler(
         WHERE c.search_vector @@ websearch_to_tsquery('english', ${question})
           AND d.status = 'completed'
         ORDER BY rank DESC
-        LIMIT 10
+        LIMIT 8
       `;
     } catch (dbError) {
       console.error('Database search error:', dbError);
@@ -128,7 +128,7 @@ export default async function handler(
     // Build context from search results
     const context = searchResults
       .map((result, idx) => {
-        return `[Source ${idx + 1}] ${result.document_title} - ${result.section_title || 'General'}
+        return `[Source ${idx + 1}] ${result.title} - ${result.section_title || 'General'}
 Source: ${result.source}
 Content: ${result.content}
 ---`;
@@ -138,7 +138,7 @@ Content: ${result.content}
     // Prepare citations for response
     const citations = searchResults.map((result, idx) => ({
       id: idx + 1,
-      title: result.document_title,
+      title: result.title,
       section: result.section_title || 'General',
       source: result.source,
       url: result.source_url || null,

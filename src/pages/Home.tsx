@@ -17,25 +17,6 @@ const Home: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="mb-6">
-            <div className="mx-auto mb-6 flex justify-center">
-              <div className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md">
-                <div className="w-24 h-24 flex items-center justify-center">
-                  <img
-                    src="/csdai-logo.png"
-                    alt="CSDAI Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="text-left">
-                  <div className="text-2xl font-bold text-[#14558f]">CSDAI</div>
-                  <div className="text-lg font-semibold text-[#388557]">Child Support Directors</div>
-                  <div className="text-lg font-semibold text-[#388557]">Association Intelligence</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             CSDAI — Child Support Directors Association Intelligence
           </h1>

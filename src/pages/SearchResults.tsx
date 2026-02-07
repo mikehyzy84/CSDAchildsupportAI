@@ -10,7 +10,7 @@ const SearchResultsPage: React.FC = () => {
   const query = searchParams.get('q') || '';
   const mode = (searchParams.get('mode') as 'summary' | 'steps') || 'summary';
   
-  const { results, queryResponse, isLoading, search } = useSearch();
+  const { results, queryResponse, isLoading, search, error } = useSearch();
   const [searchMode, setSearchMode] = useState<'summary' | 'steps'>(mode);
 
   useEffect(() => {
@@ -92,6 +92,27 @@ const SearchResultsPage: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : error ? (
+            <div className="ma-card p-6 bg-red-50 border-l-4 border-red-400">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <span className="text-red-600 text-xl">⚠️</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-red-900 mb-2">
+                    Search Error
+                  </h3>
+                  <p className="text-red-800 mb-4">
+                    {error}
+                  </p>
+                  <p className="text-sm text-red-700">
+                    Please try again or contact support if the problem persists.
+                  </p>
+                </div>
+              </div>
             </div>
           ) : (
             <SearchResultsComponent
