@@ -12,7 +12,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(sampleUsers[1]);
+  // Set default user to Manager (sampleUsers[3]) so Admin access works
+  const [user, setUser] = useState<User | null>(sampleUsers[3]);
 
   const login = (role: User['role']) => {
     const userData = sampleUsers.find(u => u.role === role) || sampleUsers[1];
