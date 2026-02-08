@@ -124,6 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={onToggle}
                   className={`flex items-center gap-3 px-3 py-2.5 mb-0.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-white/8 text-white'
