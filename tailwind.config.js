@@ -40,6 +40,11 @@ export default {
       },
       animation: {
         'fade-up': 'fade-up 0.5s ease-out'
+      },
+      zIndex: {
+        '90': '90',
+        '100': '100',
+        '110': '110'
       }
     },
   },

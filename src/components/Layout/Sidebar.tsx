@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Menu, X } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -11,14 +11,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const location = useLocation();
   const { user } = useAuth();
-
-  // Mock recent chats data
-  const recentChats = [
-    { id: 1, title: 'Guideline calculation for interstate case', date: '2 hours ago' },
-    { id: 2, title: 'Modification procedures for custody change', date: 'Yesterday' },
-    { id: 3, title: 'Enforcement options for non-payment', date: '2 days ago' },
-    { id: 4, title: 'Paternity establishment requirements', date: '3 days ago' },
-  ];
 
   const navItems = [
     { path: '/', label: 'Chat', icon: MessageSquare },
@@ -42,40 +34,63 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     return user.name[0].toUpperCase();
   };
 
+  const getCountyDisplay = () => {
+    if (user?.county && user.county !== 'County') {
+      return `${user.county} County`;
+    }
+    return 'County Not Set';
+  };
+
   return (
     <>
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-90 lg:hidden"
           onClick={onToggle}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-navy z-50 transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 h-full bg-navy z-100 transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
+        } lg:translate-x-0 lg:z-50`}
         style={{ width: '280px' }}
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}
           <div className="px-5 py-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+            {/* Logo Container */}
+            <div className="flex justify-center mb-3">
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'white',
+                  padding: '8px',
+                }}
+              >
                 <img
-                  src="/csdai-logo.png"
+                  src="/Gemini_Generated_Image_uppc26uppc26uppc.png"
                   alt="CSDAI Logo"
-                  className="w-full h-full object-contain"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    objectFit: 'contain',
+                  }}
                 />
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-white">CSDAI</h1>
-                <p className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
-                  Policy Intelligence
-                </p>
-              </div>
+            </div>
+
+            {/* Logo Text */}
+            <div className="text-center">
+              <h1 className="text-lg font-bold text-white mb-1">CSDAI</h1>
+              <p className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
+                Policy Intelligence
+              </p>
             </div>
           </div>
 
@@ -100,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="px-4 py-2">
+          <nav className="px-4 py-2 flex-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = isActivePath(item.path);
@@ -122,26 +137,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             })}
           </nav>
 
-          {/* Recent Chats Section */}
-          <div className="flex-1 overflow-y-auto px-4 py-2">
-            <h2 className="text-[11px] uppercase text-white/30 font-medium mb-2 px-2.5">
-              Recent
-            </h2>
-            <div className="space-y-0.5">
-              {recentChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  className="w-full text-left px-2.5 py-2 rounded-md hover:bg-white/4 transition-colors"
-                >
-                  <div className="text-[13px] text-white/75 truncate mb-0.5">
-                    {chat.title}
-                  </div>
-                  <div className="text-[11px] text-white/30">{chat.date}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* User Profile */}
           <div
             className="px-4 py-4"
@@ -159,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                   {user?.name || 'User'}
                 </div>
                 <div className="text-[10px] text-white/35 truncate">
-                  {user?.county || 'County'} County
+                  {getCountyDisplay()}
                 </div>
               </div>
             </div>
