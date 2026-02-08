@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MessageSquare, FileText, Settings, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -10,6 +10,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const navItems = [
@@ -97,6 +98,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           {/* New Conversation Button */}
           <div className="px-4 mb-2">
             <button
+              onClick={() => {
+                navigate('/');
+                onToggle?.(); // Close sidebar on mobile
+              }}
               className="w-full px-3.5 py-2.5 rounded-lg text-teal-light text-sm font-medium flex items-center justify-center gap-2 transition-colors"
               style={{
                 background: 'rgba(14, 165, 233, 0.1)',
