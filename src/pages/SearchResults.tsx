@@ -1,137 +1,165 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import SearchResultsComponent from '../components/Search/SearchResults';
-import AIPanel from '../components/Search/AIPanel';
+import { useSearchParams } from 'react-router-dom';
+import { Send } from 'lucide-react';
+import MessageList from '../components/messages/MessageList';
 import { useSearch } from '../hooks/useSearch';
 
+interface Message {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+  citations?: Array<{
+    id: number;
+    title: string;
+    section: string;
+    source: string;
+    url: string | null;
+  }>;
+}
+
 const SearchResultsPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get('q') || '';
   const mode = (searchParams.get('mode') as 'summary' | 'steps') || 'summary';
-  
+
   const { citations, queryResponse, isLoading, search, error } = useSearch();
-  const [searchMode, setSearchMode] = useState<'summary' | 'steps'>(mode);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [currentQuery, setCurrentQuery] = useState('');
 
+  // Handle initial query from URL
   useEffect(() => {
-    if (query) {
-      search(query, mode);
-      setSearchMode(mode);
+    if (initialQuery && messages.length === 0) {
+      handleSearch(initialQuery);
     }
-  }, [query, mode, search]);
+  }, [initialQuery]);
 
-  const handleSuggestionClick = (suggestion: string) => {
-    search(suggestion, searchMode);
-    const newUrl = `/search?q=${encodeURIComponent(suggestion)}&mode=${searchMode}`;
-    window.history.pushState({}, '', newUrl);
+  // Handle search completion
+  useEffect(() => {
+    if (queryResponse && currentQuery) {
+      // Add user message if not already added
+      const lastMessage = messages[messages.length - 1];
+      if (!lastMessage || lastMessage.content !== currentQuery) {
+        const newUserMessage: Message = {
+          type: 'user',
+          content: currentQuery,
+          timestamp: new Date(),
+        };
+
+        const newAIMessage: Message = {
+          type: 'assistant',
+          content: queryResponse.summary || 'No response received.',
+          timestamp: new Date(),
+          citations: citations,
+        };
+
+        setMessages((prev) => [...prev, newUserMessage, newAIMessage]);
+      }
+      setCurrentQuery('');
+    }
+  }, [queryResponse, citations]);
+
+  // Handle error
+  useEffect(() => {
+    if (error && currentQuery) {
+      const newUserMessage: Message = {
+        type: 'user',
+        content: currentQuery,
+        timestamp: new Date(),
+      };
+
+      const errorMessage: Message = {
+        type: 'assistant',
+        content: `I encountered an error: ${error}. Please try rephrasing your question.`,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, newUserMessage, errorMessage]);
+      setCurrentQuery('');
+    }
+  }, [error]);
+
+  const handleSearch = (query: string) => {
+    if (!query.trim() || isLoading) return;
+
+    setCurrentQuery(query);
+    setInputValue('');
+    search(query, mode);
+
+    // Update URL
+    setSearchParams({ q: query, mode });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(inputValue);
+  };
+
+  const handleStarterClick = (question: string) => {
+    handleSearch(question);
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center space-x-4 mb-4">
-          <Link
-            to="/"
-            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Search</span>
-          </Link>
-        </div>
-        
-        <div className="border-l-4 border-blue-500 pl-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Search Results</h1>
-          <p className="text-gray-600">
-            <span className="font-medium">Query:</span> "{query}"
-          </p>
-          <p className="text-sm text-gray-500">
-            Showing results in {searchMode === 'summary' ? 'summary' : 'step-by-step'} mode
-          </p>
-        </div>
+    <div className="relative min-h-screen bg-slate">
+      {/* Messages Container */}
+      <div className="pb-32">
+        <MessageList messages={messages} onStarterClick={handleStarterClick} />
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="max-w-[800px] mx-auto px-6">
+            <div className="flex justify-start w-full mb-6">
+              <div
+                className="bg-white rounded-lg p-5 max-w-[85%]"
+                style={{
+                  borderLeft: '4px solid #0EA5E9',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-teal rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span className="text-sm text-gray-500">Thinking...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Search Results */}
-        <div className="lg:col-span-2">
-          {/* Loading State */}
-          {isLoading ? (
-            <div className="space-y-6">
-              <div className="ma-card p-6">
-                <div className="animate-pulse">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
-                    <div className="flex-1 space-y-4">
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                      <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 rounded"></div>
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="ma-card p-6">
-                  <div className="animate-pulse">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-5 bg-gray-200 rounded-full w-20"></div>
-                    </div>
-                    <div className="space-y-2 mb-4">
-                      <div className="h-4 bg-gray-200 rounded"></div>
-                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                    <div className="flex space-x-3">
-                      <div className="h-9 bg-gray-200 rounded w-32"></div>
-                      <div className="h-9 bg-gray-200 rounded w-28"></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="ma-card p-6 bg-red-50 border-l-4 border-red-400">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                    <span className="text-red-600 text-xl">⚠️</span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-red-900 mb-2">
-                    Search Error
-                  </h3>
-                  <p className="text-red-800 mb-4">
-                    {error}
-                  </p>
-                  <p className="text-sm text-red-700">
-                    Please try again or contact support if the problem persists.
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <SearchResultsComponent
-              queryResponse={queryResponse}
-              citations={citations}
-              searchMode={searchMode}
-              searchQuery={query}
+      {/* Fixed Input Area */}
+      <div
+        className="fixed bottom-0 right-0 bg-white z-40 lg:left-[280px] left-0"
+        style={{
+          borderTop: '1px solid #E2E8F0',
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
+        }}
+      >
+        <div className="max-w-[800px] mx-auto px-6 py-4">
+          <form onSubmit={handleSubmit} className="flex items-center gap-3">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Ask a question about child support policy..."
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent text-[15px]"
+              disabled={isLoading}
             />
-          )}
-        </div>
-
-        {/* AI Panel Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <AIPanel 
-              query={query} 
-              onSuggestionClick={handleSuggestionClick}
-            />
-          </div>
+            <button
+              type="submit"
+              disabled={!inputValue.trim() || isLoading}
+              className="px-5 py-3 bg-teal text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Send size={18} />
+              Send
+            </button>
+          </form>
+          <p className="text-xs text-gray-400 mt-2 text-center">
+            CSDAI can make mistakes. Verify important information.
+          </p>
         </div>
       </div>
     </div>
