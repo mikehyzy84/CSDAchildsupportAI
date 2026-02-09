@@ -1,21 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import MessageList from '../components/messages/MessageList';
 import { useSearch } from '../hooks/useSearch';
-
-interface Message {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  citations?: Array<{
-    id: number;
-    title: string;
-    section: string;
-    source: string;
-    url: string | null;
-  }>;
-}
+import { Message } from '../types';
 
 const SearchResultsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,13 +14,27 @@ const SearchResultsPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [currentQuery, setCurrentQuery] = useState('');
+  const initialSearchExecuted = useRef(false);
+
+  // Memoized search handler
+  const handleSearch = useCallback((query: string) => {
+    if (!query.trim() || isLoading) return;
+
+    setCurrentQuery(query);
+    setInputValue('');
+    search(query, mode);
+
+    // Update URL
+    setSearchParams({ q: query, mode });
+  }, [isLoading, search, mode, setSearchParams]);
 
   // Handle initial query from URL
   useEffect(() => {
-    if (initialQuery && messages.length === 0) {
+    if (initialQuery && !initialSearchExecuted.current) {
+      initialSearchExecuted.current = true;
       handleSearch(initialQuery);
     }
-  }, [initialQuery]);
+  }, [initialQuery, handleSearch]);
 
   // Handle search completion
   useEffect(() => {
@@ -57,7 +59,7 @@ const SearchResultsPage: React.FC = () => {
       }
       setCurrentQuery('');
     }
-  }, [queryResponse, citations]);
+  }, [queryResponse, citations, currentQuery, messages]);
 
   // Handle error
   useEffect(() => {
@@ -77,27 +79,16 @@ const SearchResultsPage: React.FC = () => {
       setMessages((prev) => [...prev, newUserMessage, errorMessage]);
       setCurrentQuery('');
     }
-  }, [error]);
-
-  const handleSearch = (query: string) => {
-    if (!query.trim() || isLoading) return;
-
-    setCurrentQuery(query);
-    setInputValue('');
-    search(query, mode);
-
-    // Update URL
-    setSearchParams({ q: query, mode });
-  };
+  }, [error, currentQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSearch(inputValue);
   };
 
-  const handleStarterClick = (question: string) => {
+  const handleStarterClick = useCallback((question: string) => {
     handleSearch(question);
-  };
+  }, [handleSearch]);
 
   return (
     <div className="relative min-h-screen bg-slate">

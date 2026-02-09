@@ -2,19 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import DisclaimerBanner from '../DisclaimerBanner';
 import UserMessage from './UserMessage';
 import AIMessage from './AIMessage';
-
-interface Message {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  citations?: Array<{
-    id: number;
-    title: string;
-    section: string;
-    source: string;
-    url: string | null;
-  }>;
-}
+import { Message } from '../../types';
 
 interface MessageListProps {
   messages: Message[];

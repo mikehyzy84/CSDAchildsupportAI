@@ -7,10 +7,20 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Log API key status (first 10 chars only for security)
-const apiKey = process.env.ANTHROPIC_API_KEY;
-console.log('Anthropic API Key check:', apiKey ? `${apiKey.substring(0, 10)}... (${apiKey.length} chars)` : 'NOT FOUND');
-console.log('Model to be used: claude-sonnet-4-20250514');
+// Simple logging utility
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const log = {
+  debug: (...args: any[]) => isDevelopment && console.log('[DEBUG]', ...args),
+  info: (...args: any[]) => console.log('[INFO]', ...args),
+  error: (...args: any[]) => console.error('[ERROR]', ...args),
+};
+
+// Log API key status in development only (never log keys in production)
+if (isDevelopment) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  log.debug('Anthropic API Key check:', apiKey ? `${apiKey.substring(0, 10)}... (${apiKey.length} chars)` : 'NOT FOUND');
+  log.debug('Model to be used: claude-sonnet-4-20250514');
+}
 
 // Initialize Neon client
 const sql = neon(process.env.DATABASE_URL!);
@@ -53,17 +63,37 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Validate required environment variables
+  if (!process.env.ANTHROPIC_API_KEY) {
+    log.error('ANTHROPIC_API_KEY is not set');
+    return res.status(500).json({
+      error: 'Server configuration error',
+      answer: 'The server is not properly configured. Please contact your system administrator.',
+      citations: [],
+      sessionId: 'unknown'
+    });
+  }
+
+  if (!process.env.DATABASE_URL) {
+    log.error('DATABASE_URL is not set');
+    return res.status(500).json({
+      error: 'Server configuration error',
+      answer: 'The server is not properly configured. Please contact your system administrator.',
+      citations: [],
+      sessionId: 'unknown'
+    });
+  }
+
   try {
     const { question, userEmail, sessionId, responseType = 'summary' } = req.body as ChatRequest;
 
-    // DEBUG: Log incoming request
-    console.log('=== CHAT API REQUEST ===');
-    console.log('Question received:', question);
-    console.log('Session ID:', sessionId);
-    console.log('User email:', userEmail);
-    console.log('Response type:', responseType);
-    console.log('Request body:', JSON.stringify(req.body));
-    console.log('========================');
+    // DEBUG: Log incoming request (development only)
+    log.debug('=== CHAT API REQUEST ===');
+    log.debug('Question received:', question);
+    log.debug('Session ID:', sessionId);
+    log.debug('User email:', userEmail);
+    log.debug('Response type:', responseType);
+    log.debug('========================');
 
     // Validate required fields
     if (!question || !sessionId) {
@@ -108,21 +138,12 @@ export default async function handler(
         LIMIT 8
       `;
 
-      // DEBUG: Log raw SQL result
-      console.log('=== RAW SQL RESULT ===');
-      console.log('Type:', typeof searchResults);
-      console.log('Is array:', Array.isArray(searchResults));
-      console.log('Keys:', Object.keys(searchResults || {}));
-      console.log('Raw value:', JSON.stringify(searchResults).substring(0, 500));
-      console.log('Rows property:', JSON.stringify((searchResults as any).rows)?.substring(0, 500));
-
-      // DEBUG: Log search results
-      console.log('=== DATABASE SEARCH RESULTS ===');
-      console.log('Number of results:', searchResults?.length || 0);
-      console.log('Results:', JSON.stringify(searchResults, null, 2));
-      console.log('================================');
+      // DEBUG: Log database search results (development only)
+      log.debug('=== DATABASE SEARCH RESULTS ===');
+      log.debug('Number of results:', searchResults?.length || 0);
+      log.debug('================================');
     } catch (dbError) {
-      console.error('Database search error:', dbError);
+      log.error('Database search error:', dbError);
       // Return a friendly error instead of failing
       return res.status(200).json({
         answer: "I'm having trouble searching the policy database right now. Please try again in a moment. If the issue persists, contact your system administrator.\n\nThis is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team.",
@@ -134,9 +155,7 @@ export default async function handler(
 
     // Handle no results case
     if (!searchResults || searchResults.length === 0) {
-      console.log('=== NO RESULTS FOUND ===');
-      console.log('Returning no results response');
-      console.log('========================');
+      log.debug('No database results found for query');
 
       const noResultsAnswer = "I couldn't find relevant policy guidance for your question. Please try rephrasing your question or contact your local child support office for specific guidance.\n\nThis is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team.";
 
@@ -147,7 +166,7 @@ export default async function handler(
           VALUES (${sessionId}, ${userEmail || null}, ${question}, ${noResultsAnswer}, ${JSON.stringify([])})
         `;
       } catch (logError) {
-        console.error('Failed to log chat (no results):', logError);
+        log.error('Failed to log chat (no results):', logError);
       }
 
       return res.status(200).json({
@@ -188,10 +207,8 @@ Content: ${result.content}
     // Call Anthropic API with error handling
     let answer: string;
     try {
-      console.log('=== CALLING ANTHROPIC API ===');
-      console.log('Calling Anthropic API with model: claude-sonnet-4-20250514');
-      console.log('Question:', question);
-      console.log('Context length:', context.length);
+      log.debug('Calling Anthropic API with model: claude-sonnet-4-20250514');
+      log.debug('Context length:', context.length);
 
       const message = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
@@ -213,28 +230,19 @@ Remember to cite sources and end with the required disclaimer.`
         ]
       });
 
-      console.log('Anthropic API response received successfully');
-      console.log('=============================');
+      log.debug('Anthropic API response received successfully');
 
       // Extract answer from Anthropic response
       answer = message.content[0].type === 'text'
         ? message.content[0].text
         : 'Unable to generate response';
     } catch (aiError) {
-      // Detailed error logging
-      console.error('=== ANTHROPIC API ERROR ===');
-      console.error('Error type:', aiError instanceof Error ? aiError.constructor.name : typeof aiError);
-      console.error('Error message:', aiError instanceof Error ? aiError.message : String(aiError));
-      console.error('Full error object:', JSON.stringify(aiError, null, 2));
+      // Log Anthropic API errors
+      log.error('Anthropic API error:', aiError instanceof Error ? aiError.message : String(aiError));
 
       if (aiError && typeof aiError === 'object' && 'status' in aiError) {
-        console.error('API Status:', (aiError as any).status);
-        console.error('API Error:', (aiError as any).error);
+        log.error('API Status:', (aiError as any).status);
       }
-
-      console.error('Model used:', 'claude-sonnet-4-20250514');
-      console.error('API Key present:', !!process.env.ANTHROPIC_API_KEY);
-      console.error('==========================');
 
       // Return search results with a fallback message
       answer = `I found relevant policy information but encountered an error generating a detailed response. Here are the key sources:\n\n${citations.map((c, i) => `${i + 1}. ${c.title} - ${c.section}`).join('\n')}\n\nPlease review these sources or try again. This is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team.`;
@@ -253,7 +261,7 @@ Remember to cite sources and end with the required disclaimer.`
         )
       `;
     } catch (logError) {
-      console.error('Failed to log chat:', logError);
+      log.error('Failed to log chat:', logError);
       // Continue anyway - don't fail the user's request just because logging failed
     }
 
@@ -264,17 +272,13 @@ Remember to cite sources and end with the required disclaimer.`
       sessionId
     };
 
-    // DEBUG: Log final response
-    console.log('=== FINAL RESPONSE ===');
-    console.log('Answer length:', answer?.length || 0);
-    console.log('Number of citations:', citations?.length || 0);
-    console.log('Full response:', JSON.stringify(finalResponse, null, 2));
-    console.log('======================');
+    // DEBUG: Log final response (development only)
+    log.debug('Final response - Answer length:', answer?.length || 0, 'Citations:', citations?.length || 0);
 
     return res.status(200).json(finalResponse);
 
   } catch (error) {
-    console.error('Chat API error:', error);
+    log.error('Chat API error:', error);
     // Always return a user-friendly error message
     return res.status(500).json({
       error: 'An unexpected error occurred',

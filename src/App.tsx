@@ -10,7 +10,7 @@ import Reports from './pages/Reports';
 import ReportPreview from './pages/ReportPreview';
 import RoleSelector from './components/Auth/RoleSelector';
 import { AuthProvider } from './contexts/AuthContext';
-import './styles/massachusetts-theme.css';
+import './styles/california-theme.css';
 
 const queryClient = new QueryClient();
 

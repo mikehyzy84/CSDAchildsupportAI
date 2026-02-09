@@ -41,6 +41,21 @@ export interface SearchMode {
   mode: 'summary' | 'steps';
 }
 
+export interface Citation {
+  id: number;
+  title: string;
+  section: string;
+  source: string;
+  url: string | null;
+}
+
+export interface Message {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+  citations?: Citation[];
+}
+
 export interface Analytics {
   total_searches_today: number;
   total_searches_week: number;
