@@ -15,8 +15,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
 
   const navItems = [
     { path: '/', label: 'Ask CSDAI', icon: Bot },
-    { path: '/search', label: 'Search Docs', icon: MessageSquare },
-    { path: '/reports', label: 'Reports', icon: FileText },
+    { path: '/documents', label: 'Documents', icon: FileText },
+    { path: '/reports', label: 'Reports', icon: MessageSquare },
     { path: '/admin', label: 'Admin', icon: Settings },
   ];
 
