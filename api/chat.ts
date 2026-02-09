@@ -153,39 +153,25 @@ export default async function handler(
       });
     }
 
-    // Handle no results case
-    if (!searchResults || searchResults.length === 0) {
-      log.debug('No database results found for query');
+    // Calculate confidence level based on number of results
+    const confidence = searchResults.length >= 5 ? 'high' :
+                      searchResults.length >= 2 ? 'medium' :
+                      searchResults.length >= 1 ? 'low' : 'none';
 
-      const noResultsAnswer = "I couldn't find relevant policy guidance for your question. Please try rephrasing your question or contact your local child support office for specific guidance.\n\nThis is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team.";
+    log.debug('Search confidence:', confidence, `(${searchResults.length} results)`);
 
-      // Try to log the interaction (but don't fail if logging fails)
-      try {
-        await sql`
-          INSERT INTO chats (session_id, user_email, question, answer, citations)
-          VALUES (${sessionId}, ${userEmail || null}, ${question}, ${noResultsAnswer}, ${JSON.stringify([])})
-        `;
-      } catch (logError) {
-        log.error('Failed to log chat (no results):', logError);
-      }
-
-      return res.status(200).json({
-        answer: noResultsAnswer,
-        citations: [],
-        sessionId
-      });
-    }
-
-    // Build context from search results
-    const context = searchResults
-      .map((result) => {
-        const sourceLabel = `${result.title}${result.section_title ? ' - ' + result.section_title : ''}`;
-        return `[${sourceLabel}]
+    // Build context from search results (or indicate no results)
+    const context = searchResults.length > 0
+      ? searchResults
+          .map((result) => {
+            const sourceLabel = `${result.title}${result.section_title ? ' - ' + result.section_title : ''}`;
+            return `[${sourceLabel}]
 Source: ${result.source}
 Content: ${result.content}
 ---`;
-      })
-      .join('\n\n');
+          })
+          .join('\n\n')
+      : 'No matching policy documents found in database';
 
     // Prepare citations for response
     const citations = searchResults.map((result, idx) => ({
@@ -196,19 +182,48 @@ Content: ${result.content}
       url: result.source_url || null,
     }));
 
-    // System prompt for CSDAI
-    const systemPrompt = `You are CSDAI — Child Support Directors Association Intelligence. ONLY answer from provided sources. When citing, use the actual document title and section from the context (e.g., "According to 2024 CSDA Attorney Sourcebook - Section 3a"). Never give legal advice. Never accept personal case details. End answers with: "This is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team."`;
+    // System prompt for CSDAI - confidence-aware and always helpful
+    const systemPrompt = `You are CSDAI (Child Support Directors Association Intelligence), an AI assistant helping California child support caseworkers find accurate policy guidance.
 
-    // Build user message based on response type
+Your role: Answer questions using California Family Code, federal regulations (Title IV-D, UIFSA), and DCSS policies. Provide citations for all factual claims.
+
+RESPONSE GUIDELINES:
+
+When you have strong source material (5+ documents):
+- Answer comprehensively and authoritatively
+- Cite every factual claim with [California Family Code § X] or [OCSE Handbook] format
+- Use the exact language from statutes when quoting legal text
+- Be thorough - caseworkers need complete guidance
+
+When you have limited source material (1-4 documents):
+- Use what you have but acknowledge limitations
+- Say: "Based on the limited sources I found..."
+- Still cite what you use
+- Suggest related searches they should try
+
+When you have no matching sources:
+- DO NOT refuse to answer
+- DO NOT say "I cannot help with that"
+- Instead say: "I don't have specific policy documents on this topic in my database yet."
+- Use your knowledge of CA child support law to explain the topic
+- Suggest specific searches: "Try searching for 'Family Code § 4055' or 'DCSS income withholding policy'"
+- Be conversational: "I think you're asking about X. Here's what I know..."
+
+Why this matters: Caseworkers make critical decisions affecting children and families. They need both accuracy AND helpfulness. Being unhelpful when they have a question is worse than acknowledging uncertainty while providing context.
+
+Output format: Clear paragraphs with inline citations [Source]. If uncertain about anything, explicitly say so. Always end with: "This is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team."`;
+
+    // Build user message with XML structure (Anthropic best practice)
     const responseInstruction = responseType === 'detailed'
       ? 'Provide detailed step-by-step guidance.'
       : 'Provide a brief summary.';
 
-    // Call Anthropic API with error handling
+    // Call Anthropic API with error handling - ALWAYS call regardless of chunk count
     let answer: string;
     try {
       log.debug('Calling Anthropic API with model: claude-sonnet-4-20250514');
       log.debug('Context length:', context.length);
+      log.debug('Confidence level:', confidence);
 
       const message = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
@@ -218,14 +233,17 @@ Content: ${result.content}
         messages: [
           {
             role: 'user',
-            content: `Based on the following policy documents, answer this question: "${question}"
+            content: `<question>
+${question}
+</question>
 
-${responseInstruction}
-
-Policy Context:
+<retrieved_sources>
 ${context}
+</retrieved_sources>
 
-Remember to cite sources and end with the required disclaimer.`
+<search_confidence>${confidence}</search_confidence>
+
+${responseInstruction}`
           }
         ]
       });
