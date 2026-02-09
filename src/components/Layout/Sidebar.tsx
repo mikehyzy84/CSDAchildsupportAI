@@ -14,11 +14,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const { user } = useAuth();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Bot },
-    { path: '/chat', label: 'Ask CSDAI', icon: MessageSquare },
     { path: '/documents', label: 'Documents', icon: FileText },
-    { path: '/reports', label: 'Reports', icon: FileText },
+    { path: '/reports', label: 'Reports', icon: MessageSquare },
     { path: '/admin', label: 'Admin', icon: Settings },
+  ];
+
+  // Mock chat history - in production this would come from a backend or localStorage
+  const recentChats = [
+    { id: '1', title: 'Child support calculation...', timestamp: '2 hours ago' },
+    { id: '2', title: 'UIFSA jurisdiction rules', timestamp: '1 day ago' },
+    { id: '3', title: 'Enforcement options for...', timestamp: '2 days ago' },
   ];
 
   const isActivePath = (path: string) => {
@@ -122,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="px-4 py-2 flex-1">
+          <nav className="px-4 py-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = isActivePath(item.path);
@@ -144,6 +149,39 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
               );
             })}
           </nav>
+
+          {/* Chat History Section */}
+          <div className="px-4 py-2 flex-1 overflow-y-auto">
+            <div className="mb-2">
+              <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider px-3 mb-2">
+                Recent Chats
+              </h3>
+            </div>
+            <div className="space-y-0.5">
+              {recentChats.map((chat) => (
+                <button
+                  key={chat.id}
+                  onClick={() => {
+                    navigate('/');
+                    onToggle?.();
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-md text-sm text-white/60 hover:bg-white/4 transition-colors group"
+                >
+                  <div className="flex items-start gap-2">
+                    <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-white/40" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs truncate group-hover:text-white/80 transition-colors">
+                        {chat.title}
+                      </div>
+                      <div className="text-[10px] text-white/30 mt-0.5">
+                        {chat.timestamp}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* User Profile */}
           <div
