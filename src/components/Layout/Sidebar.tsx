@@ -14,6 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const { user } = useAuth();
 
   const navItems = [
+    { path: '/', label: 'Ask CSDAI', icon: Bot },
     { path: '/documents', label: 'Documents', icon: FileText },
     { path: '/reports', label: 'Reports', icon: MessageSquare },
     { path: '/admin', label: 'Admin', icon: Settings },
@@ -106,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           <div className="px-4 mb-2">
             <button
               onClick={() => {
-                navigate('/');
+                navigate('/chat');
                 onToggle?.(); // Close sidebar on mobile
               }}
               className="w-full px-3.5 py-2.5 rounded-lg text-teal-light text-sm font-medium flex items-center justify-center gap-2 transition-colors"
@@ -162,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                 <button
                   key={chat.id}
                   onClick={() => {
-                    navigate('/');
+                    navigate('/chat');
                     onToggle?.();
                   }}
                   className="w-full text-left px-3 py-2 rounded-md text-sm text-white/60 hover:bg-white/4 transition-colors group"

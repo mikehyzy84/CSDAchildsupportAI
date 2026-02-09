@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
 import {
   Mic,
@@ -26,6 +27,9 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 const VoiceChat: React.FC = () => {
+  const location = useLocation();
+  const { initialMessage, startWithVoice } = (location.state as any) || {};
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
   const [isMicActive, setIsMicActive] = useState(false);
@@ -33,6 +37,7 @@ const VoiceChat: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasAutoConnected = useRef(false);
+  const hasHandledInitialAction = useRef(false);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -78,6 +83,29 @@ const VoiceChat: React.FC = () => {
       connectSession();
     }
   }, []);
+
+  // Handle initial message or voice mode from navigation
+  useEffect(() => {
+    if (!hasHandledInitialAction.current && conversation.status === 'connected') {
+      hasHandledInitialAction.current = true;
+
+      if (initialMessage) {
+        // Send the initial message
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'user',
+            content: initialMessage,
+            timestamp: new Date(),
+          },
+        ]);
+        conversation.sendMessage(initialMessage);
+      } else if (startWithVoice) {
+        // Start with voice mode
+        toggleMic();
+      }
+    }
+  }, [conversation.status, initialMessage, startWithVoice]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
