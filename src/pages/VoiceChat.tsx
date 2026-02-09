@@ -49,15 +49,20 @@ const VoiceChat: React.FC = () => {
     },
     onMessage: (message) => {
       console.log('Message received:', message);
-      if (message.message) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: message.source === 'user' ? 'user' : 'assistant',
-            content: message.message,
-            timestamp: new Date(),
-          },
-        ]);
+      try {
+        if (message.message && message.source === 'ai') {
+          // Only add AI messages - we add user messages manually
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'assistant',
+              content: message.message,
+              timestamp: new Date(),
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error handling message:', error);
       }
     },
     onError: (error) => {
@@ -84,13 +89,22 @@ const VoiceChat: React.FC = () => {
     }
   }, []);
 
+  // Mute voice output by default when connected
+  useEffect(() => {
+    if (conversation.status === 'connected' && !startWithVoice) {
+      // Mute by default for text mode - only unmute when mic is clicked
+      conversation.setVolume({ volume: 0 });
+      setIsMuted(true);
+    }
+  }, [conversation.status, startWithVoice]);
+
   // Handle initial message or voice mode from navigation
   useEffect(() => {
     if (!hasHandledInitialAction.current && conversation.status === 'connected') {
       hasHandledInitialAction.current = true;
 
       if (initialMessage) {
-        // Send the initial message
+        // Send the initial message (text mode - voice muted)
         setMessages((prev) => [
           ...prev,
           {
@@ -101,7 +115,9 @@ const VoiceChat: React.FC = () => {
         ]);
         conversation.sendUserMessage(initialMessage);
       } else if (startWithVoice) {
-        // Start with voice mode
+        // Start with voice mode - unmute and enable mic
+        conversation.setVolume({ volume: 1 });
+        setIsMuted(false);
         const startVoice = async () => {
           try {
             await conversation.startPTT();
@@ -160,15 +176,19 @@ const VoiceChat: React.FC = () => {
 
   const toggleMic = async () => {
     if (!isMicActive) {
-      // Start microphone (Push-to-Talk)
+      // Start microphone (Push-to-Talk) and enable voice output
       try {
+        // Unmute voice output for voice mode
+        conversation.setVolume({ volume: 1 });
+        setIsMuted(false);
+        // Start microphone
         await conversation.startPTT();
         setIsMicActive(true);
       } catch (error) {
         console.error('Failed to start microphone:', error);
       }
     } else {
-      // Stop microphone
+      // Stop microphone (but keep voice output enabled)
       try {
         await conversation.endPTT();
         setIsMicActive(false);
@@ -179,7 +199,7 @@ const VoiceChat: React.FC = () => {
   };
 
   const toggleMute = () => {
-    conversation.setVolume(isMuted ? 1 : 0);
+    conversation.setVolume({ volume: isMuted ? 1 : 0 });
     setIsMuted(!isMuted);
   };
 
