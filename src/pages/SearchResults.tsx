@@ -3,19 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import MessageList from '../components/messages/MessageList';
 import { useSearch } from '../hooks/useSearch';
-
-interface Message {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  citations?: Array<{
-    id: number;
-    title: string;
-    section: string;
-    source: string;
-    url: string | null;
-  }>;
-}
+import { Message } from '../types';
 
 const SearchResultsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
