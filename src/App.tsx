@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
-import VoiceChat from './pages/VoiceChat';
+import Chat from './pages/Chat';
 import Documents from './pages/Documents';
 import PolicyDetail from './pages/PolicyDetail';
 import Admin from './pages/Admin';
@@ -28,7 +28,7 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="chat" element={
                   <ErrorBoundary>
-                    <VoiceChat />
+                    <Chat />
                   </ErrorBoundary>
                 } />
                 <Route path="documents" element={<Documents />} />
