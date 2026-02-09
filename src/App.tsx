@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
+import VoiceChat from './pages/VoiceChat';
 import Documents from './pages/Documents';
 import PolicyDetail from './pages/PolicyDetail';
 import Admin from './pages/Admin';
@@ -24,6 +25,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
+                <Route path="chat" element={<VoiceChat />} />
                 <Route path="documents" element={<Documents />} />
                 <Route path="policy/:id" element={<PolicyDetail />} />
                 <Route path="admin" element={<Admin />} />

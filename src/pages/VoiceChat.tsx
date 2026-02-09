@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
 import {
   Mic,
@@ -26,6 +27,9 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 const VoiceChat: React.FC = () => {
+  const location = useLocation();
+  const { initialMessage, startWithVoice } = (location.state as any) || {};
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
   const [isMicActive, setIsMicActive] = useState(false);
@@ -33,6 +37,7 @@ const VoiceChat: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasAutoConnected = useRef(false);
+  const hasHandledInitialAction = useRef(false);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -79,6 +84,29 @@ const VoiceChat: React.FC = () => {
     }
   }, []);
 
+  // Handle initial message or voice mode
+  useEffect(() => {
+    if (!hasHandledInitialAction.current && conversation.status === 'connected') {
+      hasHandledInitialAction.current = true;
+
+      if (initialMessage) {
+        // Send the initial message
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'user',
+            content: initialMessage,
+            timestamp: new Date(),
+          },
+        ]);
+        conversation.sendMessage(initialMessage);
+      } else if (startWithVoice) {
+        // Start with voice mode
+        toggleMic();
+      }
+    }
+  }, [conversation.status, initialMessage, startWithVoice]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -122,8 +150,24 @@ const VoiceChat: React.FC = () => {
     }
   };
 
-  const toggleMic = () => {
-    setIsMicActive(!isMicActive);
+  const toggleMic = async () => {
+    if (!isMicActive) {
+      // Start microphone (Push-to-Talk)
+      try {
+        await conversation.startPTT();
+        setIsMicActive(true);
+      } catch (error) {
+        console.error('Failed to start microphone:', error);
+      }
+    } else {
+      // Stop microphone
+      try {
+        await conversation.endPTT();
+        setIsMicActive(false);
+      } catch (error) {
+        console.error('Failed to stop microphone:', error);
+      }
+    }
   };
 
   const toggleMute = () => {

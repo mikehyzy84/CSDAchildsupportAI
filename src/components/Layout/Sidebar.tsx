@@ -14,9 +14,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const { user } = useAuth();
 
   const navItems = [
-    { path: '/', label: 'Ask CSDAI', icon: Bot },
+    { path: '/', label: 'Home', icon: Bot },
+    { path: '/chat', label: 'Ask CSDAI', icon: MessageSquare },
     { path: '/documents', label: 'Documents', icon: FileText },
-    { path: '/reports', label: 'Reports', icon: MessageSquare },
+    { path: '/reports', label: 'Reports', icon: FileText },
     { path: '/admin', label: 'Admin', icon: Settings },
   ];
 

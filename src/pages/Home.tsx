@@ -1,177 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useConversation } from '@elevenlabs/react';
-import { Mic, MicOff, Send, Volume2, VolumeX, Loader2 } from 'lucide-react';
-import MessageList from '../components/messages/MessageList';
-import { Message } from '../types';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Mic, Send } from 'lucide-react';
 
 const Home: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
-  const [isMicActive, setIsMicActive] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [showChat, setShowChat] = useState(false);
-  const hasAutoConnected = useRef(false);
+  const navigate = useNavigate();
 
-  const conversation = useConversation({
-    onConnect: () => {
-      console.log('Connected to ElevenLabs');
-      setIsInitializing(false);
-    },
-    onDisconnect: () => {
-      console.log('Disconnected from ElevenLabs');
-    },
-    onMessage: (message) => {
-      console.log('Message received:', message);
-      if (message.message) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            type: message.source === 'user' ? 'user' : 'assistant',
-            content: message.message,
-            timestamp: new Date(),
-          },
-        ]);
-      }
-    },
-    onError: (error) => {
-      console.error('Conversation error:', error);
-      setIsInitializing(false);
-    },
-  });
-
-  // Auto-connect on mount
-  useEffect(() => {
-    if (!hasAutoConnected.current) {
-      hasAutoConnected.current = true;
-      const connectSession = async () => {
-        try {
-          await conversation.startSession({
-            agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
-          });
-        } catch (error) {
-          console.error('Failed to auto-connect:', error);
-          setIsInitializing(false);
-        }
-      };
-      connectSession();
-    }
-  }, []);
-
-  const handleTextSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!textInput.trim() || conversation.status !== 'connected') return;
-
-    // Show chat interface if not already shown
-    if (!showChat) {
-      setShowChat(true);
-    }
-
-    // Add user message immediately
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: 'user',
-        content: textInput,
-        timestamp: new Date(),
-      },
-    ]);
-
-    // Send to agent via text
-    try {
-      await conversation.sendMessage(textInput);
-      setTextInput('');
-    } catch (error) {
-      console.error('Failed to send message:', error);
+  const handleTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (textInput.trim()) {
+      // Navigate to chat with the initial message
+      navigate('/chat', { state: { initialMessage: textInput } });
     }
   };
 
-  const handleStarterClick = async (question: string) => {
-    if (conversation.status === 'connected') {
-      setShowChat(true);
-      // Add user message
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: 'user',
-          content: question,
-          timestamp: new Date(),
-        },
-      ]);
-      // Send to agent
-      await conversation.sendMessage(question);
-    } else {
-      // If not connected yet, just populate the input
-      setTextInput(question);
-    }
+  const handleVoiceClick = () => {
+    // Navigate to chat in voice mode
+    navigate('/chat', { state: { startWithVoice: true } });
   };
 
-  const toggleMic = async () => {
-    if (!isMicActive) {
-      // Start microphone (Push-to-Talk)
-      try {
-        await conversation.startPTT();
-        setIsMicActive(true);
-        if (!showChat) {
-          setShowChat(true);
-        }
-      } catch (error) {
-        console.error('Failed to start microphone:', error);
-      }
-    } else {
-      // Stop microphone
-      try {
-        await conversation.endPTT();
-        setIsMicActive(false);
-      } catch (error) {
-        console.error('Failed to stop microphone:', error);
-      }
-    }
+  const handleStarterClick = (question: string) => {
+    navigate('/chat', { state: { initialMessage: question } });
   };
 
-  const toggleMute = () => {
-    conversation.setVolume(isMuted ? 1 : 0);
-    setIsMuted(!isMuted);
-  };
-
-  const getStatusColor = () => {
-    if (isInitializing) return 'bg-blue-500';
-    if (conversation.status === 'connected') {
-      return conversation.isSpeaking ? 'bg-amber-500' : 'bg-emerald-500';
-    }
-    return 'bg-gray-400';
-  };
-
-  const getStatusText = () => {
-    if (isInitializing) return 'Connecting...';
-    if (conversation.status === 'connected') {
-      if (conversation.isSpeaking) return 'Speaking...';
-      if (isMicActive) return 'Listening...';
-      return 'Ready';
-    }
-    return 'Disconnected';
-  };
-
-  const isConnected = conversation.status === 'connected';
-  const canSend = isConnected && !isInitializing;
+  const STARTER_QUESTIONS = [
+    'How is child support calculated in California?',
+    'What enforcement options exist for delinquent payments?',
+    'How does the low-income adjustment work?',
+    'What are my rights under UIFSA for interstate cases?',
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hero Section - Always visible */}
+      {/* Hero Section */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               California Child Support Directors Association AI
             </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Search federal and state child support policies, guidelines, and procedures.
               Get intelligent summaries with policy citations to help you provide accurate guidance.
             </p>
           </div>
 
           {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-teal/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-2xl">🔍</span>
@@ -202,135 +77,86 @@ const Home: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Chat Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          {/* Status Bar */}
-          <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
-                <span className="text-sm font-medium text-gray-700">{getStatusText()}</span>
-              </div>
+          {/* Main Input Section */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+                What would you like to know about California child support policy?
+              </h2>
 
-              {/* Mute Toggle */}
-              {isConnected && (
-                <button
-                  onClick={toggleMute}
-                  className="p-2 bg-white hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
-                  title={isMuted ? 'Unmute assistant' : 'Mute assistant'}
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-4 w-4 text-gray-700" />
-                  ) : (
-                    <Volume2 className="h-4 w-4 text-gray-700" />
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
+              {/* Input Form */}
+              <form onSubmit={handleTextSubmit} className="mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      value={textInput}
+                      onChange={(e) => setTextInput(e.target.value)}
+                      placeholder="Ask a question about child support policy..."
+                      className="w-full px-6 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent outline-none"
+                    />
+                  </div>
 
-          {/* Chat Area */}
-          <div className="h-[500px] overflow-y-auto bg-slate-50">
-            {isInitializing ? (
-              <div className="flex flex-col items-center justify-center h-full">
-                <Loader2 className="h-8 w-8 text-teal animate-spin mb-4" />
-                <p className="text-gray-600">Connecting to CSDAI assistant...</p>
-              </div>
-            ) : showChat && messages.length > 0 ? (
-              <MessageList messages={messages} onStarterClick={handleStarterClick} />
-            ) : (
-              <MessageList messages={[]} onStarterClick={handleStarterClick} />
-            )}
-          </div>
-
-          {/* Input Area */}
-          <div className="border-t border-gray-200 bg-white p-4">
-            {!isInitializing && (
-              <form onSubmit={handleTextSubmit} className="flex items-center gap-2">
-                <div className="flex-1 flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-3 focus-within:ring-2 focus-within:ring-teal focus-within:border-transparent bg-white">
-                  <input
-                    type="text"
-                    value={textInput}
-                    onChange={(e) => setTextInput(e.target.value)}
-                    placeholder={
-                      isMicActive
-                        ? 'Or type your question...'
-                        : 'Ask a question about child support policy...'
-                    }
-                    disabled={!canSend}
-                    className="flex-1 outline-none text-sm bg-transparent disabled:opacity-50"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleTextSubmit();
-                      }
-                    }}
-                  />
-
-                  {/* Mic Toggle Button */}
+                  {/* Voice Button */}
                   <button
                     type="button"
-                    onClick={toggleMic}
-                    disabled={!canSend}
-                    className={`p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isMicActive
-                        ? 'bg-teal text-white hover:bg-teal/90'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                    title={isMicActive ? 'Stop using microphone' : 'Use microphone'}
+                    onClick={handleVoiceClick}
+                    className="p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all shadow-sm hover:shadow-md"
+                    title="Use voice input"
                   >
-                    {isMicActive ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+                    <Mic className="h-6 w-6" />
+                  </button>
+
+                  {/* Send Button */}
+                  <button
+                    type="submit"
+                    disabled={!textInput.trim()}
+                    className="px-8 py-4 bg-teal hover:bg-teal/90 text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Send className="h-5 w-5" />
+                    Ask
                   </button>
                 </div>
-
-                {/* Send Button */}
-                <button
-                  type="submit"
-                  disabled={!textInput.trim() || !canSend}
-                  className="px-6 py-3 bg-teal hover:bg-teal/90 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  <Send className="h-4 w-4" />
-                  Send
-                </button>
               </form>
-            )}
 
-            {/* Voice Status Indicator */}
-            {isMicActive && isConnected && (
-              <div className="mt-3 text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal/10 border border-teal/30 rounded-lg">
-                  <Mic className="h-4 w-4 text-teal animate-pulse" />
-                  <span className="text-sm font-medium text-teal">
-                    Microphone active - speak your question
-                  </span>
+              {/* Starter Questions */}
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-3">Or try these examples:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {STARTER_QUESTIONS.map((question, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleStarterClick(question)}
+                      className="text-left p-3 bg-gray-50 hover:bg-teal/5 border border-gray-200 hover:border-teal rounded-lg text-sm text-gray-700 hover:text-teal transition-all"
+                    >
+                      {question}
+                    </button>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-teal mb-1">50+</div>
+            <div className="text-4xl font-bold text-teal mb-2">50+</div>
             <div className="text-sm text-gray-600">California Counties</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-emerald mb-1">5,000+</div>
+            <div className="text-4xl font-bold text-emerald mb-2">5,000+</div>
             <div className="text-sm text-gray-600">Policy Documents</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-teal mb-1">1,200+</div>
+            <div className="text-4xl font-bold text-teal mb-2">1,200+</div>
             <div className="text-sm text-gray-600">Active Members</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-emerald mb-1">24/7</div>
+            <div className="text-4xl font-bold text-emerald mb-2">24/7</div>
             <div className="text-sm text-gray-600">Access Available</div>
           </div>
         </div>
