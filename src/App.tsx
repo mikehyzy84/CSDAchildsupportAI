@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Layout from './components/Layout/Layout';
-import Home from './pages/Home';
-import SearchResults from './pages/SearchResults';
+import VoiceChat from './pages/VoiceChat';
+import Documents from './pages/Documents';
 import PolicyDetail from './pages/PolicyDetail';
 import Admin from './pages/Admin';
 import Reports from './pages/Reports';
@@ -23,8 +23,8 @@ function App() {
             <RoleSelector />
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="search" element={<SearchResults />} />
+                <Route index element={<VoiceChat />} />
+                <Route path="documents" element={<Documents />} />
                 <Route path="policy/:id" element={<PolicyDetail />} />
                 <Route path="admin" element={<Admin />} />
                 <Route path="reports" element={<Reports />} />
