@@ -99,7 +99,7 @@ const VoiceChat: React.FC = () => {
             timestamp: new Date(),
           },
         ]);
-        conversation.sendMessage(initialMessage);
+        conversation.sendUserMessage(initialMessage);
       } else if (startWithVoice) {
         // Start with voice mode
         const startVoice = async () => {
@@ -135,7 +135,7 @@ const VoiceChat: React.FC = () => {
     ]);
 
     // Send to agent
-    conversation.sendMessage(textInput);
+    conversation.sendUserMessage(textInput);
     setTextInput('');
   };
 
@@ -151,7 +151,7 @@ const VoiceChat: React.FC = () => {
         },
       ]);
       // Send to agent
-      conversation.sendMessage(question);
+      conversation.sendUserMessage(question);
     } else {
       // If not connected yet, just populate the input
       setTextInput(question);
