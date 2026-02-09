@@ -102,10 +102,18 @@ const VoiceChat: React.FC = () => {
         conversation.sendMessage(initialMessage);
       } else if (startWithVoice) {
         // Start with voice mode
-        toggleMic();
+        const startVoice = async () => {
+          try {
+            await conversation.startPTT();
+            setIsMicActive(true);
+          } catch (error) {
+            console.error('Failed to start voice mode:', error);
+          }
+        };
+        startVoice();
       }
     }
-  }, [conversation.status, initialMessage, startWithVoice]);
+  }, [conversation.status, initialMessage, startWithVoice, conversation]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
