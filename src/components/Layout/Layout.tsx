@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
-import Header from './Header';
 import Footer from './Footer';
 
 const Layout: React.FC = () => {
@@ -20,15 +19,20 @@ const Layout: React.FC = () => {
       {/* Hamburger Menu Button (Mobile Only) */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-30 w-10 h-10 bg-navy rounded-lg flex items-center justify-center text-white lg:hidden shadow-lg"
+        className="fixed z-110 bg-white border border-gray-300 rounded-lg flex items-center justify-center lg:hidden shadow-md hover:shadow-lg transition-shadow"
+        style={{
+          top: '16px',
+          left: '16px',
+          width: '44px',
+          height: '44px',
+        }}
         aria-label="Toggle menu"
       >
-        <Menu size={20} />
+        <Menu size={24} className="text-gray-700" />
       </button>
 
       {/* Main Content Area */}
       <div className="lg:ml-[280px] min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1">
           <Outlet />
         </main>
