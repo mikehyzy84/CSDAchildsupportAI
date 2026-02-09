@@ -89,14 +89,16 @@ const VoiceChat: React.FC = () => {
     }
   }, []);
 
-  // Mute voice output by default when connected
+  // Mute voice output immediately on connect
   useEffect(() => {
-    if (conversation.status === 'connected' && !startWithVoice) {
-      // Mute by default for text mode - only unmute when mic is clicked
-      conversation.setVolume({ volume: 0 });
-      setIsMuted(true);
+    if (conversation.status === 'connected') {
+      // Always mute initially - unmute only when mic is clicked
+      setTimeout(() => {
+        conversation.setVolume({ volume: 0 });
+        setIsMuted(true);
+      }, 100);
     }
-  }, [conversation.status, startWithVoice]);
+  }, [conversation.status]);
 
   // Handle initial message or voice mode from navigation
   useEffect(() => {
@@ -138,7 +140,17 @@ const VoiceChat: React.FC = () => {
 
   const handleTextSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!textInput.trim() || conversation.status !== 'connected') return;
+    if (!textInput.trim()) return;
+
+    // If not connected, just show error
+    if (conversation.status !== 'connected') {
+      alert('Not connected to assistant. Please wait...');
+      return;
+    }
+
+    // Ensure audio is muted for text input
+    conversation.setVolume({ volume: 0 });
+    setIsMuted(true);
 
     // Add user message immediately
     setMessages((prev) => [
@@ -157,6 +169,10 @@ const VoiceChat: React.FC = () => {
 
   const handleExampleClick = (question: string) => {
     if (conversation.status === 'connected') {
+      // Ensure audio is muted
+      conversation.setVolume({ volume: 0 });
+      setIsMuted(true);
+
       // Add user message
       setMessages((prev) => [
         ...prev,
@@ -386,8 +402,8 @@ const VoiceChat: React.FC = () => {
                         ? 'Or speak your question...'
                         : 'Ask a question about child support policy...'
                     }
-                    disabled={!canSend}
-                    className="flex-1 outline-none text-sm bg-transparent disabled:opacity-50"
+                    disabled={!isConnected}
+                    className="flex-1 outline-none text-sm bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -415,7 +431,7 @@ const VoiceChat: React.FC = () => {
                 {/* Send Button */}
                 <button
                   type="submit"
-                  disabled={!textInput.trim() || !canSend}
+                  disabled={!textInput.trim() || !isConnected}
                   className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   <Send className="h-4 w-4" />
