@@ -6,9 +6,6 @@ import {
   Send,
   Volume2,
   VolumeX,
-  Phone,
-  PhoneOff,
-  Keyboard,
   AlertCircle,
   Bot,
   User,
@@ -31,13 +28,16 @@ const EXAMPLE_QUESTIONS = [
 const VoiceChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
-  const [isTextMode, setIsTextMode] = useState(false);
+  const [isMicActive, setIsMicActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasAutoConnected = useRef(false);
 
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to ElevenLabs');
+      setIsInitializing(false);
     },
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs');
@@ -57,32 +57,35 @@ const VoiceChat: React.FC = () => {
     },
     onError: (error) => {
       console.error('Conversation error:', error);
+      setIsInitializing(false);
     },
   });
+
+  // Auto-connect on mount
+  useEffect(() => {
+    if (!hasAutoConnected.current) {
+      hasAutoConnected.current = true;
+      const connectSession = async () => {
+        try {
+          await conversation.startSession({
+            agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
+          });
+        } catch (error) {
+          console.error('Failed to auto-connect:', error);
+          setIsInitializing(false);
+        }
+      };
+      connectSession();
+    }
+  }, []);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleStartSession = async () => {
-    try {
-      await conversation.startSession({
-        agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
-      });
-    } catch (error) {
-      console.error('Failed to start session:', error);
-      alert('Failed to connect. Please check your microphone permissions.');
-    }
-  };
-
-  const handleEndSession = async () => {
-    await conversation.endSession();
-    setMessages([]);
-  };
-
-  const handleTextSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleTextSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!textInput.trim() || conversation.status !== 'connected') return;
 
     // Add user message immediately
@@ -102,6 +105,7 @@ const VoiceChat: React.FC = () => {
 
   const handleExampleClick = (question: string) => {
     if (conversation.status === 'connected') {
+      // Add user message
       setMessages((prev) => [
         ...prev,
         {
@@ -110,10 +114,16 @@ const VoiceChat: React.FC = () => {
           timestamp: new Date(),
         },
       ]);
+      // Send to agent
       conversation.sendMessage(question);
     } else {
+      // If not connected yet, just populate the input
       setTextInput(question);
     }
+  };
+
+  const toggleMic = () => {
+    setIsMicActive(!isMicActive);
   };
 
   const toggleMute = () => {
@@ -122,26 +132,25 @@ const VoiceChat: React.FC = () => {
   };
 
   const getStatusColor = () => {
-    switch (conversation.status) {
-      case 'connected':
-        return conversation.isSpeaking ? 'bg-amber-500' : 'bg-emerald-500';
-      case 'connecting':
-        return 'bg-blue-500';
-      default:
-        return 'bg-gray-400';
+    if (isInitializing) return 'bg-blue-500';
+    if (conversation.status === 'connected') {
+      return conversation.isSpeaking ? 'bg-amber-500' : 'bg-emerald-500';
     }
+    return 'bg-gray-400';
   };
 
   const getStatusText = () => {
+    if (isInitializing) return 'Connecting...';
     if (conversation.status === 'connected') {
       if (conversation.isSpeaking) return 'Speaking...';
-      return 'Listening';
+      if (isMicActive) return 'Listening...';
+      return 'Ready';
     }
-    if (conversation.status === 'connecting') return 'Connecting...';
     return 'Disconnected';
   };
 
   const isConnected = conversation.status === 'connected';
+  const canSend = isConnected && !isInitializing;
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] bg-slate-50">
@@ -165,19 +174,35 @@ const VoiceChat: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <Bot className="h-7 w-7 text-amber-600" />
-                Voice Assistant
+                Ask CSDAI
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Ask questions about California child support policy
+                California child support policy assistant
               </p>
             </div>
 
-            {/* Status Indicator */}
+            {/* Status & Controls */}
             <div className="flex items-center gap-3">
+              {/* Status Indicator */}
               <div className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
                 <span className="text-sm font-medium text-gray-700">{getStatusText()}</span>
               </div>
+
+              {/* Mute Toggle */}
+              {isConnected && (
+                <button
+                  onClick={toggleMute}
+                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  title={isMuted ? 'Unmute assistant' : 'Mute assistant'}
+                >
+                  {isMuted ? (
+                    <VolumeX className="h-5 w-5 text-gray-700" />
+                  ) : (
+                    <Volume2 className="h-5 w-5 text-gray-700" />
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -188,29 +213,35 @@ const VoiceChat: React.FC = () => {
             // Empty State
             <div className="flex flex-col items-center justify-center h-full py-12">
               <div className="bg-white rounded-full p-6 shadow-lg mb-6">
-                <Mic className="h-12 w-12 text-amber-600" />
+                <Bot className="h-12 w-12 text-amber-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Start a Conversation</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Welcome to CSDAI Policy Assistant
+              </h2>
               <p className="text-gray-600 text-center max-w-md mb-8">
-                Click "Start Session" below to begin talking with the voice assistant, or type your
-                question.
+                {isInitializing
+                  ? 'Connecting to the assistant...'
+                  : 'Ask a question or click an example below to get started'}
               </p>
 
               {/* Example Questions */}
-              <div className="w-full max-w-2xl">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Example Questions:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {EXAMPLE_QUESTIONS.map((question, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleExampleClick(question)}
-                      className="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-amber-400 hover:shadow-md transition-all text-sm text-gray-700 hover:text-amber-900"
-                    >
-                      {question}
-                    </button>
-                  ))}
+              {!isInitializing && (
+                <div className="w-full max-w-2xl">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Example Questions:</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {EXAMPLE_QUESTIONS.map((question, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleExampleClick(question)}
+                        disabled={!isConnected}
+                        className="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-amber-400 hover:shadow-md transition-all text-sm text-gray-700 hover:text-amber-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             // Messages
@@ -259,86 +290,60 @@ const VoiceChat: React.FC = () => {
           )}
         </div>
 
-        {/* Controls Area */}
+        {/* Input Area */}
         <div className="border-t border-gray-200 bg-white p-4">
           <div className="max-w-5xl mx-auto">
-            {/* Mode Toggle & Controls */}
-            <div className="flex items-center gap-3 mb-4">
-              {/* Mode Toggle */}
-              <button
-                onClick={() => setIsTextMode(!isTextMode)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors"
-                disabled={!isConnected}
-              >
-                {isTextMode ? (
-                  <>
-                    <Keyboard className="h-4 w-4" />
-                    Text Mode
-                  </>
-                ) : (
-                  <>
-                    <Mic className="h-4 w-4" />
-                    Voice Mode
-                  </>
-                )}
-              </button>
+            {/* Loading State */}
+            {isInitializing && (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-6 w-6 text-amber-600 animate-spin mr-3" />
+                <span className="text-sm text-gray-600">Connecting to assistant...</span>
+              </div>
+            )}
 
-              {/* Mute Toggle */}
-              {isConnected && (
-                <button
-                  onClick={toggleMute}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors"
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  {isMuted ? 'Unmute' : 'Mute'}
-                </button>
-              )}
+            {/* Text Input with Mic Toggle */}
+            {!isInitializing && (
+              <form onSubmit={handleTextSubmit} className="flex items-center gap-2">
+                <div className="flex-1 flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-3 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-transparent bg-white">
+                  <input
+                    type="text"
+                    value={textInput}
+                    onChange={(e) => setTextInput(e.target.value)}
+                    placeholder={
+                      isMicActive
+                        ? 'Or speak your question...'
+                        : 'Ask a question about child support policy...'
+                    }
+                    disabled={!canSend}
+                    className="flex-1 outline-none text-sm bg-transparent disabled:opacity-50"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleTextSubmit();
+                      }
+                    }}
+                  />
 
-              <div className="flex-1" />
+                  {/* Mic Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={toggleMic}
+                    disabled={!canSend}
+                    className={`p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isMicActive
+                        ? 'bg-amber-600 text-white hover:bg-amber-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    title={isMicActive ? 'Stop using microphone' : 'Use microphone'}
+                  >
+                    {isMicActive ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+                  </button>
+                </div>
 
-              {/* Session Controls */}
-              {!isConnected ? (
-                <button
-                  onClick={handleStartSession}
-                  disabled={conversation.status === 'connecting'}
-                  className="flex items-center gap-2 px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {conversation.status === 'connecting' ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Connecting...
-                    </>
-                  ) : (
-                    <>
-                      <Phone className="h-5 w-5" />
-                      Start Session
-                    </>
-                  )}
-                </button>
-              ) : (
-                <button
-                  onClick={handleEndSession}
-                  className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all"
-                >
-                  <PhoneOff className="h-5 w-5" />
-                  End Session
-                </button>
-              )}
-            </div>
-
-            {/* Text Input (when in text mode or voice not available) */}
-            {isTextMode && isConnected && (
-              <form onSubmit={handleTextSubmit} className="flex gap-2">
-                <input
-                  type="text"
-                  value={textInput}
-                  onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Type your question..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
-                />
+                {/* Send Button */}
                 <button
                   type="submit"
-                  disabled={!textInput.trim()}
+                  disabled={!textInput.trim() || !canSend}
                   className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   <Send className="h-4 w-4" />
@@ -347,25 +352,14 @@ const VoiceChat: React.FC = () => {
               </form>
             )}
 
-            {/* Voice Mode Indicator */}
-            {!isTextMode && isConnected && (
-              <div className="text-center">
+            {/* Voice Status Indicator */}
+            {isMicActive && isConnected && (
+              <div className="mt-3 text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg">
-                  {conversation.isSpeaking ? (
-                    <>
-                      <Volume2 className="h-4 w-4 text-amber-700 animate-pulse" />
-                      <span className="text-sm font-medium text-amber-900">
-                        Assistant is speaking...
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Mic className="h-4 w-4 text-amber-700 animate-pulse" />
-                      <span className="text-sm font-medium text-amber-900">
-                        Listening... speak your question
-                      </span>
-                    </>
-                  )}
+                  <Mic className="h-4 w-4 text-amber-700 animate-pulse" />
+                  <span className="text-sm font-medium text-amber-900">
+                    Microphone active - speak your question
+                  </span>
                 </div>
               </div>
             )}

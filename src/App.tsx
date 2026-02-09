@@ -24,9 +24,8 @@ function App() {
             <RoleSelector />
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
+                <Route index element={<VoiceChat />} />
                 <Route path="search" element={<SearchResults />} />
-                <Route path="voice" element={<VoiceChat />} />
                 <Route path="policy/:id" element={<PolicyDetail />} />
                 <Route path="admin" element={<Admin />} />
                 <Route path="reports" element={<Reports />} />

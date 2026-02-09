@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Mic } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus, Bot } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -14,8 +14,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const { user } = useAuth();
 
   const navItems = [
-    { path: '/', label: 'Chat', icon: MessageSquare },
-    { path: '/voice', label: 'Voice Assistant', icon: Mic },
+    { path: '/', label: 'Ask CSDAI', icon: Bot },
+    { path: '/search', label: 'Search Docs', icon: MessageSquare },
     { path: '/reports', label: 'Reports', icon: FileText },
     { path: '/admin', label: 'Admin', icon: Settings },
   ];
