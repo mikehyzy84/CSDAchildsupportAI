@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-csdai-navy text-white shadow-xl">
+    <header className="bg-navy text-white shadow-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
@@ -41,7 +41,7 @@ const Header: React.FC = () => {
                 to={path}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   location.pathname === path
-                    ? 'bg-csdai-sky text-white'
+                    ? 'bg-teal text-white'
                     : 'text-white/70 hover:bg-white/10 hover:text-white'
                 }`}
               >
@@ -54,13 +54,13 @@ const Header: React.FC = () => {
 
           {/* Disclaimer Pill & User Menu */}
           <div className="flex items-center space-x-3 flex-shrink-0">
-            <div className="hidden xl:flex items-center px-3 py-1.5 bg-csdai-amber/20 border border-csdai-amber/30 rounded-full">
-              <span className="text-xs text-csdai-amber font-medium whitespace-nowrap">Policy guidance only — not legal advice</span>
+            <div className="hidden xl:flex items-center px-3 py-1.5 bg-amber/20 border border-amber/30 rounded-full">
+              <span className="text-xs text-amber font-medium whitespace-nowrap">Policy guidance only — not legal advice</span>
             </div>
             <div className="hidden md:flex items-center space-x-2 text-sm">
               <User size={16} className="text-white/70" />
               <span className="text-white/90">{user?.name}</span>
-              <span className="px-2 py-0.5 bg-csdai-sky/20 rounded text-xs font-medium text-csdai-sky">
+              <span className="px-2 py-0.5 bg-teal/20 rounded text-xs font-medium text-teal">
                 {user?.role}
               </span>
             </div>

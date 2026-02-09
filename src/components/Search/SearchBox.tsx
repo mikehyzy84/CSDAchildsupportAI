@@ -41,7 +41,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch, isLoading, initialQuery
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask a question about child support policies... (e.g., 'How do I calculate support for joint custody?')"
-              className="w-full h-36 px-5 py-4 pr-14 border border-gray-200 rounded-xl focus:ring-2 focus:ring-csdai-sky focus:border-csdai-sky resize-none text-lg shadow-sm bg-white transition-shadow hover:shadow-md"
+              className="w-full h-36 px-5 py-4 pr-14 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal focus:border-teal resize-none text-lg shadow-sm bg-white transition-shadow hover:shadow-md"
               disabled={isLoading}
             />
             <div className="absolute bottom-4 right-4">
@@ -67,7 +67,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch, isLoading, initialQuery
               className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm ${
                 mode === 'summary'
                   ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
-                  : 'bg-csdai-sky border border-csdai-sky text-white hover:bg-csdai-sky/90'
+                  : 'bg-teal border border-teal text-white hover:bg-teal/90'
               }`}
             >
               {mode === 'summary' ? (
@@ -87,7 +87,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch, isLoading, initialQuery
           <button
             type="submit"
             disabled={!query.trim() || isLoading}
-            className="px-8 py-2.5 bg-csdai-sky text-white rounded-lg hover:bg-csdai-sky/90 focus:outline-none focus:ring-2 focus:ring-csdai-sky focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md font-medium"
+            className="px-8 py-2.5 bg-teal text-white rounded-lg hover:bg-teal/90 focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md font-medium"
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
@@ -110,7 +110,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch, isLoading, initialQuery
               <button
                 key={index}
                 onClick={() => handleExampleClick(example)}
-                className="block w-full text-left px-4 py-3 bg-white border border-gray-100 rounded-lg hover:bg-white hover:border-csdai-sky/30 hover:shadow-sm transition-all text-gray-600 hover:text-csdai-sky text-sm"
+                className="block w-full text-left px-4 py-3 bg-white border border-gray-100 rounded-lg hover:bg-white hover:border-teal/30 hover:shadow-sm transition-all text-gray-600 hover:text-teal text-sm"
                 disabled={isLoading}
               >
                 <div className="flex items-center space-x-3">
