@@ -8,7 +8,6 @@ import PolicyDetail from './pages/PolicyDetail';
 import Admin from './pages/Admin';
 import Reports from './pages/Reports';
 import ReportPreview from './pages/ReportPreview';
-import VoiceChat from './pages/VoiceChat';
 import RoleSelector from './components/Auth/RoleSelector';
 import { AuthProvider } from './contexts/AuthContext';
 import './styles/california-theme.css';
@@ -24,7 +23,7 @@ function App() {
             <RoleSelector />
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<VoiceChat />} />
+                <Route index element={<Home />} />
                 <Route path="search" element={<SearchResults />} />
                 <Route path="policy/:id" element={<PolicyDetail />} />
                 <Route path="admin" element={<Admin />} />
