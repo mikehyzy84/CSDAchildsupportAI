@@ -67,19 +67,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: '64px',
+                  width: '180px',
                   height: '64px',
-                  borderRadius: '50%',
                   background: 'white',
+                  borderRadius: '8px',
                   padding: '8px',
                 }}
               >
                 <img
-                  src="/Gemini_Generated_Image_uppc26uppc26uppc.png"
-                  alt="CSDAI Logo"
+                  src="/csda-logo.png"
+                  alt="CSDA Logo"
                   style={{
-                    width: '48px',
-                    height: '48px',
+                    width: '100%',
+                    height: '100%',
                     objectFit: 'contain',
                   }}
                 />

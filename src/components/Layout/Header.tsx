@@ -21,8 +21,8 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
             <div className="flex-shrink-0">
               <img
-                src="/CSDAI Logo.png"
-                alt="CSDAI Logo"
+                src="/csda-logo.png"
+                alt="CSDA Logo"
                 className="h-12 w-auto object-contain"
               />
             </div>
