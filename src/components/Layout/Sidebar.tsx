@@ -129,26 +129,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           <div className="px-5 py-6">
             {/* Logo Container */}
             <div className="flex justify-center mb-3">
-              <div
-                className="flex items-center justify-center"
+              <img
+                src="/CSDAI%20NEW%20LOGO.png"
+                alt="CSDAI Logo"
                 style={{
                   width: '180px',
-                  height: '64px',
-                  background: 'white',
-                  borderRadius: '8px',
-                  padding: '8px',
+                  height: 'auto',
+                  objectFit: 'contain',
                 }}
-              >
-                <img
-                  src="/CSDAI%20NEW%20LOGO.png"
-                  alt="CSDAI Logo"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              </div>
+              />
             </div>
 
             {/* Logo Text */}
