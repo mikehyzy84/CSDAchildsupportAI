@@ -44,7 +44,7 @@ const Documents: React.FC = () => {
       case 'state':
         return ['California', 'State'];
       case 'county':
-        return ['County', 'Local'];
+        return ['County', 'Local', 'county_policy', 'Fresno'];
       case 'all':
       default:
         return [];

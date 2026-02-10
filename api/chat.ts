@@ -170,8 +170,12 @@ export default async function handler(
           ts_rank(c.search_vector, websearch_to_tsquery('english', ${question})) as rank
         FROM chunks c
         JOIN documents d ON c.document_id = d.id
-        WHERE c.search_vector @@ websearch_to_tsquery('english', ${question})
-          AND d.status = 'completed'
+        WHERE (
+          c.search_vector @@ websearch_to_tsquery('english', ${question})
+          OR d.section ILIKE '%' || ${question} || '%'
+          OR d.title ILIKE '%' || ${question} || '%'
+        )
+        AND d.status = 'completed'
         ORDER BY rank DESC
         LIMIT 8
       `;
