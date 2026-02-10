@@ -320,7 +320,7 @@ const Chat: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <Bot className="h-7 w-7 text-amber-600" />
-                Ask CSDAI
+                Ask ChildSupportIQ
               </h1>
               <p className="text-sm text-gray-600 mt-1">
                 {isConnectingVoice

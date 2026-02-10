@@ -27,7 +27,7 @@ const Header: React.FC = () => {
               />
             </div>
             <div className="hidden sm:block min-w-0">
-              <h1 className="text-lg font-bold">CSDAI</h1>
+              <h1 className="text-lg font-bold">ChildSupportIQ</h1>
               <p className="text-xs text-white/80 whitespace-nowrap">Child Support Directors Association Intelligence</p>
             </div>
           </div>

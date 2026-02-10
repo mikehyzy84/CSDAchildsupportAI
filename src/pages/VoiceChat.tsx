@@ -262,7 +262,7 @@ const VoiceChat: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <Bot className="h-7 w-7 text-amber-600" />
-                Ask CSDAI
+                Ask ChildSupportIQ
               </h1>
               <p className="text-sm text-gray-600 mt-1">
                 California child support policy assistant
@@ -304,7 +304,7 @@ const VoiceChat: React.FC = () => {
                 <Bot className="h-12 w-12 text-amber-600" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Welcome to CSDAI Policy Assistant
+                Welcome to ChildSupportIQ Policy Assistant
               </h2>
               <p className="text-gray-600 text-center max-w-md mb-8">
                 {isInitializing

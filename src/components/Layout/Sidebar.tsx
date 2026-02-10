@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const [isLoadingChats, setIsLoadingChats] = useState(false);
 
   const navItems = [
-    { path: '/', label: 'Ask CSDAI', icon: Bot },
+    { path: '/', label: 'Ask ChildSupportIQ', icon: Bot },
     { path: '/documents', label: 'Documents', icon: FileText },
     { path: '/reports', label: 'Reports', icon: MessageSquare },
     { path: '/admin', label: 'Admin', icon: Settings },
@@ -142,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
 
             {/* Logo Text */}
             <div className="text-center">
-              <h1 className="text-lg font-bold text-white mb-1">CSDAI</h1>
+              <h1 className="text-lg font-bold text-white mb-1">ChildSupportIQ</h1>
               <p className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
                 Child Support Directors Association Intelligence
               </p>

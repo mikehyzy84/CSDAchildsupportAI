@@ -172,7 +172,7 @@ Under CCR Title 22, Division 13, the Department of Child Support Services implem
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Sparkles className="h-5 w-5 text-teal" />
-          <h3 className="text-lg font-semibold text-gray-900">CSDAI Policy Analysis</h3>
+          <h3 className="text-lg font-semibold text-gray-900">ChildSupportIQ Policy Analysis</h3>
         </div>
 
         <button
