@@ -10,7 +10,8 @@ import PolicyDetail from './pages/PolicyDetail';
 import Admin from './pages/Admin';
 import Reports from './pages/Reports';
 import ReportPreview from './pages/ReportPreview';
-import RoleSelector from './components/Auth/RoleSelector';
+import Login from './pages/Login';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import './styles/california-theme.css';
 
@@ -22,9 +23,16 @@ function App() {
       <AuthProvider>
         <Router>
           <div className="App">
-            <RoleSelector />
             <Routes>
-              <Route path="/" element={<Layout />}>
+              {/* Public route - Login */}
+              <Route path="/login" element={<Login />} />
+
+              {/* Protected routes */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }>
                 <Route index element={<Home />} />
                 <Route path="chat" element={
                   <ErrorBoundary>
@@ -33,9 +41,15 @@ function App() {
                 } />
                 <Route path="documents" element={<Documents />} />
                 <Route path="policy/:id" element={<PolicyDetail />} />
-                <Route path="admin" element={<Admin />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="report-preview" element={<ReportPreview />} />
+
+                {/* Admin route - requires Admin or Manager role */}
+                <Route path="admin" element={
+                  <ProtectedRoute requiredRoles={['Admin', 'Manager']}>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
               </Route>
             </Routes>
           </div>

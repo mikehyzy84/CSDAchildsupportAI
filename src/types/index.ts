@@ -34,7 +34,10 @@ export interface User {
   name: string;
   email: string;
   role: 'Worker' | 'Supervisor' | 'Manager' | 'Admin';
+  county?: string;
   active: boolean;
+  created_at?: string;
+  last_login?: string;
 }
 
 export interface SearchMode {

@@ -280,6 +280,7 @@ export const sampleUsers: User[] = [
     name: 'Sarah Johnson',
     email: 'sarah.johnson@dcss.ca.gov',
     role: 'Supervisor',
+    county: 'Los Angeles',
     active: true
   },
   {
@@ -287,6 +288,7 @@ export const sampleUsers: User[] = [
     name: 'Michael Chen',
     email: 'michael.chen@dcss.ca.gov',
     role: 'Worker',
+    county: 'San Diego',
     active: true
   },
   {
@@ -294,6 +296,7 @@ export const sampleUsers: User[] = [
     name: 'Lisa Rodriguez',
     email: 'lisa.rodriguez@dcss.ca.gov',
     role: 'Worker',
+    county: 'Orange',
     active: true
   },
   {
@@ -301,6 +304,7 @@ export const sampleUsers: User[] = [
     name: 'David Williams',
     email: 'david.williams@dcss.ca.gov',
     role: 'Manager',
+    county: 'Riverside',
     active: true
   },
   {
@@ -308,6 +312,7 @@ export const sampleUsers: User[] = [
     name: 'Jennifer Davis',
     email: 'jennifer.davis@dcss.ca.gov',
     role: 'Admin',
+    county: 'State Office',
     active: true
   }
 ];
