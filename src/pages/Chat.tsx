@@ -36,9 +36,11 @@ const Chat: React.FC = () => {
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [isMicActive, setIsMicActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isConnectingVoice, setIsConnectingVoice] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasHandledInitialMessage = useRef(false);
   const hasHandledVoiceStart = useRef(false);
+  const shouldStartPTT = useRef(false);
 
   // Generate session ID once
   const sessionIdRef = useRef(
@@ -49,11 +51,15 @@ const Chat: React.FC = () => {
   const conversation = useConversation({
     onConnect: () => {
       console.log('Voice mode connected');
+      setIsConnectingVoice(false);
+      setIsVoiceMode(true);
     },
     onDisconnect: () => {
       console.log('Voice mode disconnected');
       setIsVoiceMode(false);
       setIsMicActive(false);
+      setIsConnectingVoice(false);
+      shouldStartPTT.current = false;
     },
     onMessage: (message) => {
       if (message.message && message.source === 'ai') {
@@ -70,6 +76,8 @@ const Chat: React.FC = () => {
     onError: (error) => {
       console.error('Voice error:', error);
       setIsVoiceMode(false);
+      setIsConnectingVoice(false);
+      shouldStartPTT.current = false;
     },
   });
 
@@ -93,6 +101,28 @@ const Chat: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Start PTT when voice mode is connected
+  useEffect(() => {
+    const startPTTWhenReady = async () => {
+      if (
+        conversation.status === 'connected' &&
+        shouldStartPTT.current &&
+        !isMicActive
+      ) {
+        shouldStartPTT.current = false;
+        try {
+          await conversation.startPTT();
+          setIsMicActive(true);
+          console.log('PTT started successfully');
+        } catch (error) {
+          console.error('Failed to start PTT:', error);
+          setIsVoiceMode(false);
+        }
+      }
+    };
+    startPTTWhenReady();
+  }, [conversation.status, isMicActive]);
 
   // Send text message via /api/chat
   const sendTextMessage = async (messageText: string) => {
@@ -159,21 +189,25 @@ const Chat: React.FC = () => {
   };
 
   const toggleVoiceMode = async () => {
-    if (!isVoiceMode) {
-      setIsVoiceMode(true);
+    if (!isVoiceMode && !isConnectingVoice) {
+      setIsConnectingVoice(true);
+      shouldStartPTT.current = true;
       try {
         await conversation.startSession({
           agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
         });
-        await conversation.startPTT();
-        setIsMicActive(true);
+        // PTT will be started automatically by useEffect when connected
       } catch (error) {
-        console.error('Failed to start voice:', error);
-        setIsVoiceMode(false);
+        console.error('Failed to start voice session:', error);
+        setIsConnectingVoice(false);
+        shouldStartPTT.current = false;
       }
-    } else {
+    } else if (isVoiceMode) {
       try {
-        if (isMicActive) await conversation.endPTT();
+        if (isMicActive) {
+          await conversation.endPTT();
+          setIsMicActive(false);
+        }
         await conversation.endSession();
       } catch (error) {
         console.error('Failed to end voice:', error);
@@ -214,7 +248,7 @@ const Chat: React.FC = () => {
                 Ask CSDAI
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                {isVoiceMode ? 'Voice Mode Active' : 'Text Mode'}
+                {isConnectingVoice ? 'Connecting...' : isVoiceMode ? 'Voice Mode Active' : 'Text Mode'}
               </p>
             </div>
 
@@ -317,9 +351,18 @@ const Chat: React.FC = () => {
               <button
                 type="button"
                 onClick={toggleVoiceMode}
-                className={`p-2 rounded-lg ${isVoiceMode ? 'bg-amber-600 text-white' : 'bg-gray-100'}`}
+                disabled={isConnectingVoice}
+                className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
+                  isVoiceMode ? 'bg-amber-600 text-white' : 'bg-gray-100'
+                }`}
               >
-                {isVoiceMode ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+                {isConnectingVoice ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : isVoiceMode ? (
+                  <Mic className="h-5 w-5" />
+                ) : (
+                  <MicOff className="h-5 w-5" />
+                )}
               </button>
             </div>
             {!isVoiceMode && (
