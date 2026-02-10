@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, ExternalLink, Search } from 'lucide-react';
+import { FileText, ExternalLink, Search, Filter } from 'lucide-react';
 
 interface Document {
   id: number;
@@ -10,11 +10,13 @@ interface Document {
   url: string | null;
 }
 
+type FilterType = 'all' | 'federal' | 'state' | 'county';
+
 const Documents: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -34,12 +36,34 @@ const Documents: React.FC = () => {
     fetchDocuments();
   }, []);
 
-  const categories = ['all', ...new Set(documents.map((doc) => doc.category))];
+  // Map filter types to database categories
+  const getCategoryFilter = (filter: FilterType): string[] => {
+    switch (filter) {
+      case 'federal':
+        return ['Federal'];
+      case 'state':
+        return ['California', 'State'];
+      case 'county':
+        return ['County', 'Local'];
+      case 'all':
+      default:
+        return [];
+    }
+  };
 
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.source.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
+
+    if (selectedFilter === 'all') {
+      return matchesSearch;
+    }
+
+    const allowedCategories = getCategoryFilter(selectedFilter);
+    const matchesCategory = allowedCategories.some(cat =>
+      doc.category.toLowerCase().includes(cat.toLowerCase())
+    );
+
     return matchesSearch && matchesCategory;
   });
 
@@ -56,34 +80,44 @@ const Documents: React.FC = () => {
 
         {/* Search and Filter */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search documents..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal focus:border-transparent"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal focus:border-transparent"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category === 'all' ? 'All Categories' : category}
-                </option>
-              ))}
-            </select>
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search documents by title or source..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal focus:border-transparent"
+            />
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
+          {/* Filter Buttons */}
+          <div className="flex items-center gap-3 mb-4">
+            <Filter className="h-5 w-5 text-gray-500" />
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all' as FilterType, label: 'All' },
+                { value: 'federal' as FilterType, label: 'Federal' },
+                { value: 'state' as FilterType, label: 'State' },
+                { value: 'county' as FilterType, label: 'County' },
+              ].map((filter) => (
+                <button
+                  key={filter.value}
+                  onClick={() => setSelectedFilter(filter.value)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedFilter === filter.value
+                      ? 'bg-teal text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-600">
             Showing {filteredDocuments.length} of {documents.length} documents
           </div>
         </div>
