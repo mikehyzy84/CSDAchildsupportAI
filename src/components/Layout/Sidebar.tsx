@@ -140,8 +140,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                 }}
               >
                 <img
-                  src="/CSDAI NEW LOGO.png"
-                  alt="CSDA Logo"
+                  src="/CSDAI%20NEW%20LOGO.png"
+                  alt="CSDAI Logo"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -155,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             <div className="text-center">
               <h1 className="text-lg font-bold text-white mb-1">CSDAI</h1>
               <p className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
-                Policy Intelligence
+                Child Support Directors Association Intelligence
               </p>
             </div>
           </div>

@@ -32,8 +32,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onStarterClick }) =
           {/* Logo */}
           <div className="mb-6">
             <img
-              src="/CSDAI NEW LOGO.png"
-              alt="CSDA Logo"
+              src="/CSDAI%20NEW%20LOGO.png"
+              alt="CSDAI Logo"
               className="w-[120px] h-auto"
             />
           </div>
