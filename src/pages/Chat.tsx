@@ -34,13 +34,12 @@ const Chat: React.FC = () => {
   const [textInput, setTextInput] = useState('');
   const [isTextLoading, setIsTextLoading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [isMicActive, setIsMicActive] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [micMuted, setMicMuted] = useState(true); // Start with mic muted
+  const [volumeMuted, setVolumeMuted] = useState(false);
   const [isConnectingVoice, setIsConnectingVoice] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasHandledInitialMessage = useRef(false);
   const hasHandledVoiceStart = useRef(false);
-  const shouldStartPTT = useRef(false);
 
   // Generate session ID once
   const sessionIdRef = useRef(
@@ -49,6 +48,7 @@ const Chat: React.FC = () => {
 
   // ElevenLabs conversation (only for voice mode)
   const conversation = useConversation({
+    micMuted, // Pass mic muted state (v0.14.0 API)
     onConnect: () => {
       console.log('Voice mode connected');
       setIsConnectingVoice(false);
@@ -57,9 +57,8 @@ const Chat: React.FC = () => {
     onDisconnect: () => {
       console.log('Voice mode disconnected');
       setIsVoiceMode(false);
-      setIsMicActive(false);
+      setMicMuted(true);
       setIsConnectingVoice(false);
-      shouldStartPTT.current = false;
     },
     onMessage: (message) => {
       if (message.message && message.source === 'ai') {
@@ -77,7 +76,7 @@ const Chat: React.FC = () => {
       console.error('Voice error:', error);
       setIsVoiceMode(false);
       setIsConnectingVoice(false);
-      shouldStartPTT.current = false;
+      setMicMuted(true);
     },
   });
 
@@ -101,28 +100,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Start PTT when voice mode is connected
-  useEffect(() => {
-    const startPTTWhenReady = async () => {
-      if (
-        conversation.status === 'connected' &&
-        shouldStartPTT.current &&
-        !isMicActive
-      ) {
-        shouldStartPTT.current = false;
-        try {
-          await conversation.startPTT();
-          setIsMicActive(true);
-          console.log('PTT started successfully');
-        } catch (error) {
-          console.error('Failed to start PTT:', error);
-          setIsVoiceMode(false);
-        }
-      }
-    };
-    startPTTWhenReady();
-  }, [conversation.status, isMicActive]);
 
   // Send text message via /api/chat
   const sendTextMessage = async (messageText: string) => {
@@ -191,36 +168,33 @@ const Chat: React.FC = () => {
   const toggleVoiceMode = async () => {
     if (!isVoiceMode && !isConnectingVoice) {
       setIsConnectingVoice(true);
-      shouldStartPTT.current = true;
       try {
         await conversation.startSession({
           agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
         });
-        // PTT will be started automatically by useEffect when connected
+        // Unmute mic to enable voice input
+        setMicMuted(false);
       } catch (error) {
         console.error('Failed to start voice session:', error);
         setIsConnectingVoice(false);
-        shouldStartPTT.current = false;
+        setMicMuted(true);
       }
     } else if (isVoiceMode) {
       try {
-        if (isMicActive) {
-          await conversation.endPTT();
-          setIsMicActive(false);
-        }
+        // Mute mic before ending session
+        setMicMuted(true);
         await conversation.endSession();
       } catch (error) {
         console.error('Failed to end voice:', error);
       }
       setIsVoiceMode(false);
-      setIsMicActive(false);
     }
   };
 
-  const toggleMute = () => {
+  const toggleVolumeMute = () => {
     if (isVoiceMode) {
-      conversation.setVolume({ volume: isMuted ? 1 : 0 });
-      setIsMuted(!isMuted);
+      conversation.setVolume({ volume: volumeMuted ? 1 : 0 });
+      setVolumeMuted(!volumeMuted);
     }
   };
 
@@ -248,16 +222,21 @@ const Chat: React.FC = () => {
                 Ask CSDAI
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                {isConnectingVoice ? 'Connecting...' : isVoiceMode ? 'Voice Mode Active' : 'Text Mode'}
+                {isConnectingVoice
+                  ? 'Connecting...'
+                  : isVoiceMode
+                    ? `Voice Mode Active ${micMuted ? '(Mic Off)' : '(Mic On)'}`
+                    : 'Text Mode'}
               </p>
             </div>
 
             {isVoiceMode && (
               <button
-                onClick={toggleMute}
+                onClick={toggleVolumeMute}
                 className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                title={volumeMuted ? 'Unmute volume' : 'Mute volume'}
               >
-                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                {volumeMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
               </button>
             )}
           </div>
@@ -338,7 +317,13 @@ const Chat: React.FC = () => {
                 type="text"
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                placeholder={isVoiceMode ? 'Voice mode - use microphone' : 'Ask a question...'}
+                placeholder={
+                  isVoiceMode
+                    ? micMuted
+                      ? 'Voice mode - mic muted'
+                      : 'Voice mode - speak now'
+                    : 'Ask a question...'
+                }
                 disabled={isVoiceMode || isTextLoading}
                 className="flex-1 outline-none disabled:opacity-50"
                 onKeyDown={(e) => {
@@ -353,12 +338,13 @@ const Chat: React.FC = () => {
                 onClick={toggleVoiceMode}
                 disabled={isConnectingVoice}
                 className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
-                  isVoiceMode ? 'bg-amber-600 text-white' : 'bg-gray-100'
+                  isVoiceMode && !micMuted ? 'bg-amber-600 text-white' : 'bg-gray-100'
                 }`}
+                title={isVoiceMode ? 'Exit voice mode' : 'Enter voice mode'}
               >
                 {isConnectingVoice ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
-                ) : isVoiceMode ? (
+                ) : isVoiceMode && !micMuted ? (
                   <Mic className="h-5 w-5" />
                 ) : (
                   <MicOff className="h-5 w-5" />
