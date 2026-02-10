@@ -39,7 +39,9 @@ interface ChatRequest {
   question: string;
   userEmail?: string;
   sessionId: string;
-  responseType?: 'summary' | 'detailed';
+  responseType?: 'summary' | 'detailed' | 'voice';
+  answer?: string; // For voice mode - pre-generated answer
+  skipGeneration?: boolean; // Skip AI generation, just save the conversation
 }
 
 interface SearchResult {
@@ -85,7 +87,14 @@ export default async function handler(
   }
 
   try {
-    const { question, userEmail, sessionId, responseType = 'summary' } = req.body as ChatRequest;
+    const {
+      question,
+      userEmail,
+      sessionId,
+      responseType = 'summary',
+      answer: providedAnswer,
+      skipGeneration = false
+    } = req.body as ChatRequest;
 
     // DEBUG: Log incoming request (development only)
     log.debug('=== CHAT API REQUEST ===');
@@ -103,6 +112,35 @@ export default async function handler(
         citations: [],
         sessionId: sessionId || 'unknown'
       });
+    }
+
+    // If skipGeneration is true, just save the provided answer and return
+    if (skipGeneration && providedAnswer) {
+      try {
+        await sql`
+          INSERT INTO chats (session_id, user_email, question, answer, citations)
+          VALUES (
+            ${sessionId},
+            ${userEmail || null},
+            ${question},
+            ${providedAnswer},
+            ${JSON.stringify([])}
+          )
+        `;
+
+        return res.status(200).json({
+          answer: providedAnswer,
+          citations: [],
+          sessionId,
+          saved: true
+        });
+      } catch (logError) {
+        log.error('Failed to save voice interaction:', logError);
+        return res.status(500).json({
+          error: 'Failed to save conversation',
+          sessionId
+        });
+      }
     }
 
     // Check for sensitive information

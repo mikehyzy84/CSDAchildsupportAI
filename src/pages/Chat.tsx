@@ -12,6 +12,7 @@ import {
   User,
   Loader2,
 } from 'lucide-react';
+import ChatHistory from '../components/ChatHistory';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -40,6 +41,7 @@ const Chat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasHandledInitialMessage = useRef(false);
   const hasHandledVoiceStart = useRef(false);
+  const pendingVoiceQuestion = useRef<string | null>(null);
 
   // Generate session ID once
   const sessionIdRef = useRef(
@@ -61,15 +63,31 @@ const Chat: React.FC = () => {
       setIsConnectingVoice(false);
     },
     onMessage: (message) => {
-      if (message.message && message.source === 'ai') {
-        setMessages((prev) => [
-          ...prev,
-          {
+      if (message.message) {
+        if (message.source === 'user') {
+          // User spoke - add to UI and save for database logging
+          const userMsg: Message = {
+            role: 'user',
+            content: message.message,
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, userMsg]);
+          pendingVoiceQuestion.current = message.message;
+        } else if (message.source === 'ai') {
+          // AI responded - add to UI and save to database
+          const aiMsg: Message = {
             role: 'assistant',
             content: message.message,
             timestamp: new Date(),
-          },
-        ]);
+          };
+          setMessages((prev) => [...prev, aiMsg]);
+
+          // Save voice interaction to database
+          if (pendingVoiceQuestion.current) {
+            saveVoiceInteraction(pendingVoiceQuestion.current, message.message);
+            pendingVoiceQuestion.current = null;
+          }
+        }
       }
     },
     onError: (error) => {
@@ -100,6 +118,26 @@ const Chat: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Save voice interaction to database
+  const saveVoiceInteraction = async (question: string, answer: string) => {
+    try {
+      await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question,
+          answer, // Pre-generated answer from ElevenLabs
+          sessionId: sessionIdRef.current,
+          responseType: 'voice',
+          skipGeneration: true, // Flag to just save without re-generating
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to save voice interaction:', error);
+      // Don't block UX on logging failure
+    }
+  };
 
   // Send text message via /api/chat
   const sendTextMessage = async (messageText: string) => {
@@ -198,21 +236,76 @@ const Chat: React.FC = () => {
     }
   };
 
-  return (
-    <div className="flex flex-col h-[calc(100vh-80px)] bg-slate-50">
-      {/* Disclaimer */}
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
-        <div className="flex items-start gap-3 max-w-5xl mx-auto">
-          <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-900">
-            <strong>Legal Disclaimer:</strong> This AI assistant provides policy and procedural
-            guidance, not legal advice.
-          </p>
-        </div>
-      </div>
+  const handleSelectSession = async (sessionId: string) => {
+    try {
+      // Load messages for this session
+      const response = await fetch(`/api/chat-history?sessionId=${sessionId}`);
+      if (!response.ok) throw new Error('Failed to load session');
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden flex flex-col max-w-5xl mx-auto w-full">
+      const data = await response.json();
+      const loadedMessages: Message[] = data.messages.map((msg: any) => ({
+        role: msg.question ? 'user' : 'assistant',
+        content: msg.question || msg.answer,
+        timestamp: new Date(msg.created_at),
+      }));
+
+      // Flatten question/answer pairs into chronological messages
+      const chronologicalMessages: Message[] = [];
+      data.messages.forEach((msg: any) => {
+        chronologicalMessages.push({
+          role: 'user',
+          content: msg.question,
+          timestamp: new Date(msg.created_at),
+        });
+        chronologicalMessages.push({
+          role: 'assistant',
+          content: msg.answer,
+          timestamp: new Date(msg.created_at),
+        });
+      });
+
+      setMessages(chronologicalMessages);
+      sessionIdRef.current = sessionId;
+    } catch (error) {
+      console.error('Error loading session:', error);
+    }
+  };
+
+  const handleNewChat = () => {
+    // Generate new session ID
+    sessionIdRef.current = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    // Clear messages
+    setMessages([]);
+    // End voice mode if active
+    if (isVoiceMode) {
+      toggleVoiceMode();
+    }
+  };
+
+  return (
+    <div className="flex h-[calc(100vh-80px)]">
+      {/* Chat History Sidebar */}
+      <ChatHistory
+        currentSessionId={sessionIdRef.current}
+        onSelectSession={handleSelectSession}
+        onNewChat={handleNewChat}
+      />
+
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col bg-slate-50">
+        {/* Disclaimer */}
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
+          <div className="flex items-start gap-3 max-w-5xl mx-auto">
+            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-900">
+              <strong>Legal Disclaimer:</strong> This AI assistant provides policy and procedural
+              guidance, not legal advice.
+            </p>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden flex flex-col max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="p-6 pb-4">
           <div className="flex items-center justify-between">
@@ -363,6 +456,7 @@ const Chat: React.FC = () => {
             )}
           </form>
         </div>
+      </div>
       </div>
     </div>
   );

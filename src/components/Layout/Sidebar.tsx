@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                 }}
               >
                 <img
-                  src="/csda-logo.png"
+                  src="/CSDAI NEW LOGO.png"
                   alt="CSDA Logo"
                   style={{
                     width: '100%',
