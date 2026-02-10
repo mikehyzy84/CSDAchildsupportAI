@@ -12,7 +12,6 @@ import {
   User,
   Loader2,
 } from 'lucide-react';
-import ChatHistory from '../components/ChatHistory';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -29,7 +28,7 @@ const EXAMPLE_QUESTIONS = [
 
 const Chat: React.FC = () => {
   const location = useLocation();
-  const { initialMessage, startWithVoice } = (location.state as any) || {};
+  const { initialMessage, startWithVoice, newChat, loadSessionId } = (location.state as any) || {};
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
@@ -113,6 +112,24 @@ const Chat: React.FC = () => {
       toggleVoiceMode();
     }
   }, [startWithVoice]);
+
+  // Handle new chat from sidebar
+  useEffect(() => {
+    if (newChat) {
+      handleNewChat();
+      // Clear the state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+    }
+  }, [newChat]);
+
+  // Handle load session from sidebar
+  useEffect(() => {
+    if (loadSessionId) {
+      handleSelectSession(loadSessionId);
+      // Clear the state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+    }
+  }, [loadSessionId]);
 
   // Auto-scroll
   useEffect(() => {
@@ -283,29 +300,20 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-80px)]">
-      {/* Chat History Sidebar */}
-      <ChatHistory
-        currentSessionId={sessionIdRef.current}
-        onSelectSession={handleSelectSession}
-        onNewChat={handleNewChat}
-      />
-
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-slate-50">
-        {/* Disclaimer */}
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
-          <div className="flex items-start gap-3 max-w-5xl mx-auto">
-            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-900">
-              <strong>Legal Disclaimer:</strong> This AI assistant provides policy and procedural
-              guidance, not legal advice.
-            </p>
-          </div>
+    <div className="flex flex-col h-[calc(100vh-80px)] bg-slate-50">
+      {/* Disclaimer */}
+      <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
+        <div className="flex items-start gap-3 max-w-5xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-900">
+            <strong>Legal Disclaimer:</strong> This AI assistant provides policy and procedural
+            guidance, not legal advice.
+          </p>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-hidden flex flex-col max-w-5xl mx-auto w-full">
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden flex flex-col max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="p-6 pb-4">
           <div className="flex items-center justify-between">
@@ -456,7 +464,6 @@ const Chat: React.FC = () => {
             )}
           </form>
         </div>
-      </div>
       </div>
     </div>
   );

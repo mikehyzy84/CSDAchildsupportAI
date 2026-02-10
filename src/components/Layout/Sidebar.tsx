@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Bot } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus, Bot, Clock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+
+interface ChatSession {
+  session_id: string;
+  first_question: string;
+  message_count: number;
+  last_updated: string;
+}
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -12,6 +19,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [recentChats, setRecentChats] = useState<ChatSession[]>([]);
+  const [isLoadingChats, setIsLoadingChats] = useState(false);
 
   const navItems = [
     { path: '/', label: 'Ask CSDAI', icon: Bot },
@@ -20,12 +29,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     { path: '/admin', label: 'Admin', icon: Settings },
   ];
 
-  // Mock chat history - in production this would come from a backend or localStorage
-  const recentChats = [
-    { id: '1', title: 'Child support calculation...', timestamp: '2 hours ago' },
-    { id: '2', title: 'UIFSA jurisdiction rules', timestamp: '1 day ago' },
-    { id: '3', title: 'Enforcement options for...', timestamp: '2 days ago' },
-  ];
+  // Load chat history
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  const loadChatHistory = async () => {
+    try {
+      setIsLoadingChats(true);
+      const response = await fetch('/api/chat-history');
+      if (!response.ok) throw new Error('Failed to load chat history');
+
+      const data = await response.json();
+      setRecentChats(data.sessions || []);
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+    } finally {
+      setIsLoadingChats(false);
+    }
+  };
 
   const isActivePath = (path: string) => {
     if (path === '/') {
@@ -48,6 +70,41 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
       return `${user.county} County`;
     }
     return 'County Not Set';
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const truncateQuestion = (question: string, maxLength = 35) => {
+    if (question.length <= maxLength) return question;
+    return question.substring(0, maxLength) + '...';
+  };
+
+  const handleNewConversation = () => {
+    navigate('/chat', { state: { newChat: true } });
+    onToggle?.();
+  };
+
+  const handleSelectChat = (sessionId: string) => {
+    navigate('/chat', { state: { loadSessionId: sessionId } });
+    onToggle?.();
   };
 
   return (
@@ -106,10 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           {/* New Conversation Button */}
           <div className="px-4 mb-2">
             <button
-              onClick={() => {
-                navigate('/chat');
-                onToggle?.(); // Close sidebar on mobile
-              }}
+              onClick={handleNewConversation}
               className="w-full px-3.5 py-2.5 rounded-lg text-teal-light text-sm font-medium flex items-center justify-center gap-2 transition-colors"
               style={{
                 background: 'rgba(14, 165, 233, 0.1)',
@@ -158,30 +212,40 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                 Recent Chats
               </h3>
             </div>
-            <div className="space-y-0.5">
-              {recentChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => {
-                    navigate('/chat');
-                    onToggle?.();
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-md text-sm text-white/60 hover:bg-white/4 transition-colors group"
-                >
-                  <div className="flex items-start gap-2">
-                    <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-white/40" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs truncate group-hover:text-white/80 transition-colors">
-                        {chat.title}
-                      </div>
-                      <div className="text-[10px] text-white/30 mt-0.5">
-                        {chat.timestamp}
+            {isLoadingChats ? (
+              <div className="px-3 py-4 text-xs text-white/40 text-center">
+                Loading...
+              </div>
+            ) : recentChats.length === 0 ? (
+              <div className="px-3 py-4 text-xs text-white/40 text-center">
+                No recent chats
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                {recentChats.map((chat) => (
+                  <button
+                    key={chat.session_id}
+                    onClick={() => handleSelectChat(chat.session_id)}
+                    className="w-full text-left px-3 py-2 rounded-md text-sm text-white/60 hover:bg-white/4 transition-colors group"
+                  >
+                    <div className="flex items-start gap-2">
+                      <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-white/40" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs truncate group-hover:text-white/80 transition-colors">
+                          {truncateQuestion(chat.first_question)}
+                        </div>
+                        <div className="text-[10px] text-white/30 mt-0.5 flex items-center gap-1">
+                          <Clock size={10} />
+                          {formatDate(chat.last_updated)}
+                          <span className="mx-1">•</span>
+                          {chat.message_count} msg{chat.message_count !== 1 ? 's' : ''}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* User Profile */}
