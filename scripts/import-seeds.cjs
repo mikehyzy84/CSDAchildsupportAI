@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
 const { spawn } = require('child_process');
+// Try to load .env file if it exists
+try {
+  require('dotenv').config();
+} catch (e) {
+  // dotenv not required if env vars are already set
+}
+
 const fs = require('fs');
 const path = require('path');
 
