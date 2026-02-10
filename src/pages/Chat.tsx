@@ -28,7 +28,7 @@ const EXAMPLE_QUESTIONS = [
 
 const Chat: React.FC = () => {
   const location = useLocation();
-  const { initialMessage } = (location.state as any) || {};
+  const { initialMessage, startWithVoice } = (location.state as any) || {};
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [textInput, setTextInput] = useState('');
@@ -38,6 +38,7 @@ const Chat: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasHandledInitialMessage = useRef(false);
+  const hasHandledVoiceStart = useRef(false);
 
   // Generate session ID once
   const sessionIdRef = useRef(
@@ -79,6 +80,14 @@ const Chat: React.FC = () => {
       sendTextMessage(initialMessage);
     }
   }, [initialMessage]);
+
+  // Handle voice mode from home page
+  useEffect(() => {
+    if (startWithVoice && !hasHandledVoiceStart.current) {
+      hasHandledVoiceStart.current = true;
+      toggleVoiceMode();
+    }
+  }, [startWithVoice]);
 
   // Auto-scroll
   useEffect(() => {
