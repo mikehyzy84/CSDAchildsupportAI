@@ -28,12 +28,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       SELECT
         id,
         title,
-        category,
+        source as category,
         source,
-        url
+        source_url as url,
+        status
       FROM documents
+      WHERE status = 'completed'
       ORDER BY
-        CASE category
+        CASE source
           WHEN 'California' THEN 1
           WHEN 'Federal' THEN 2
           ELSE 3
