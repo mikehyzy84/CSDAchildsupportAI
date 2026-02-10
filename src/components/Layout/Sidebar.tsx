@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Bot, Clock } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus, Bot, Clock, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ChatSession {
@@ -144,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             <div className="text-center">
               <h1 className="text-lg font-bold text-white mb-1">ChildSupportIQ</h1>
               <p className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
-                Child Support Directors Association Intelligence
+                Child Support Intelligence
               </p>
             </div>
           </div>
@@ -237,25 +237,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             )}
           </div>
 
-          {/* User Profile */}
+          {/* AI Product Studio Footer */}
           <div
             className="px-4 py-4"
             style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
           >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-teal-light text-sm font-semibold"
-                style={{ background: 'rgba(14, 165, 233, 0.2)' }}
-              >
-                {getUserInitials()}
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-sm font-bold text-white mb-1">
+                  Built By AI Product Studio
+                </h3>
+                <p className="text-[10px] text-white/60 leading-relaxed">
+                  CGI's innovation lab creating cutting-edge AI products for government solutions
+                </p>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-white/80 truncate">
-                  {user?.name || 'User'}
-                </div>
-                <div className="text-[10px] text-white/35 truncate">
-                  {getCountyDisplay()}
-                </div>
+
+              <div className="space-y-1.5">
+                <a
+                  href="tel:3128139497"
+                  className="flex items-center gap-2 text-[10px] text-white/70 hover:text-white transition-colors"
+                >
+                  <Phone size={10} />
+                  <span>(312) 813-9497</span>
+                </a>
+                <a
+                  href="mailto:support@cgi.com"
+                  className="flex items-center gap-2 text-[10px] text-white/70 hover:text-white transition-colors"
+                >
+                  <Mail size={10} />
+                  <span>support@cgi.com</span>
+                </a>
+              </div>
+
+              <div className="pt-2 border-t border-white/10">
+                <p className="text-[9px] text-white/40 text-center">
+                  © 2026 CGI, Inc.
+                </p>
+                <p className="text-[9px] text-white/40 text-center mt-1">
+                  For CGI clients and authorized users only
+                </p>
               </div>
             </div>
           </div>
