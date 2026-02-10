@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Bot, Clock, Phone, Mail } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus, Bot, Clock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ChatSession {
@@ -237,44 +237,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             )}
           </div>
 
-          {/* AI Product Studio Footer */}
+          {/* User Profile Section */}
           <div
             className="px-4 py-4"
             style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
           >
-            <div className="space-y-3">
-              <div>
-                <h3 className="text-sm font-bold text-white mb-1">
-                  Built By AI Product Studio
-                </h3>
-                <p className="text-[10px] text-white/60 leading-relaxed">
-                  CGI's innovation lab creating cutting-edge AI products for government solutions
-                </p>
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-teal">
+                    {getUserInitials()}
+                  </span>
+                </div>
               </div>
-
-              <div className="space-y-1.5">
-                <a
-                  href="tel:3128139497"
-                  className="flex items-center gap-2 text-[10px] text-white/70 hover:text-white transition-colors"
-                >
-                  <Phone size={10} />
-                  <span>(312) 813-9497</span>
-                </a>
-                <a
-                  href="mailto:support@cgi.com"
-                  className="flex items-center gap-2 text-[10px] text-white/70 hover:text-white transition-colors"
-                >
-                  <Mail size={10} />
-                  <span>support@cgi.com</span>
-                </a>
-              </div>
-
-              <div className="pt-2 border-t border-white/10">
-                <p className="text-[9px] text-white/40 text-center">
-                  © 2026 CGI, Inc.
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  {user?.name || 'User'}
                 </p>
-                <p className="text-[9px] text-white/40 text-center mt-1">
-                  For CGI clients and authorized users only
+                <p className="text-xs text-white/60 truncate">
+                  {user?.role || 'Role'}
+                </p>
+                <p className="text-xs text-white/50 truncate">
+                  {getCountyDisplay()}
                 </p>
               </div>
             </div>

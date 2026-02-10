@@ -1,78 +1,43 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import { Phone, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-800 text-gray-300 py-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="text-center space-y-6">
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Child Support Directors Association</h3>
-            <p className="text-sm">
-              Supporting child support professionals nationwide
-            </p>
-            <p className="text-sm">
-              Advancing best practices and policy excellence
-            </p>
-            <p className="text-sm">
-              1234 Professional Drive
-            </p>
-            <p className="text-sm">
-              Washington, DC 20001
+            <h3 className="text-2xl font-bold text-white mb-3">
+              Built By AI Product Studio
+            </h3>
+            <p className="text-base text-gray-300 max-w-2xl mx-auto">
+              CGI's innovation lab creating cutting-edge AI products for government solutions
             </p>
           </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="https://www.childsupportdirectors.org" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-white transition-colors duration-200">
-                  <ExternalLink size={14} className="mr-2" />
-                  CSDA Website
-                </a>
-              </li>
-              <li>
-                <a href="https://www.childsupportdirectors.org/resources" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-white transition-colors duration-200">
-                  <ExternalLink size={14} className="mr-2" />
-                  Resources
-                </a>
-              </li>
-              <li>
-                <a href="https://www.childsupportdirectors.org/membership" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-white transition-colors duration-200">
-                  <ExternalLink size={14} className="mr-2" />
-                  Membership
-                </a>
-              </li>
-            </ul>
+
+          <div className="flex items-center justify-center gap-8 text-sm">
+            <a
+              href="tel:3128139497"
+              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+            >
+              <Phone size={16} />
+              <span>(312) 813-9497</span>
+            </a>
+            <a
+              href="mailto:support@cgi.com"
+              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+            >
+              <Mail size={16} />
+              <span>support@cgi.com</span>
+            </a>
           </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Support</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <span className="text-gray-400">Member Support:</span>
-                <br />
-                <span>(202) 555-CSDA</span>
-              </li>
-              <li>
-                <span className="text-gray-400">Hours:</span>
-                <br />
-                <span>Mon-Fri 8:00 AM - 5:00 PM</span>
-              </li>
-              <li>
-                <span className="text-gray-400">Technical Support:</span>
-                <br />
-                <span>support@csda.org</span>
-              </li>
-            </ul>
+
+          <div className="border-t border-gray-700 pt-6 text-sm space-y-2">
+            <p className="text-gray-400">&copy; 2026 CGI, Inc.</p>
+            <p className="text-gray-500">
+              For CGI clients and authorized users only
+            </p>
           </div>
-        </div>
-        
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
-          <p>&copy; 2024 Child Support Directors Association. All rights reserved.</p>
-          <p className="mt-2 text-gray-400">
-            This system is for CSDA members and authorized users only.
-          </p>
         </div>
       </div>
     </footer>
