@@ -123,8 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
         className={`fixed left-0 top-0 h-full bg-navy z-100 transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 lg:z-50`}
-        style={{
-                  clipPath: 'inset(25% 0 25% 0)', width: '280px' }}
+        style={{ width: '280px' }}
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}
@@ -160,7 +159,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
               onClick={handleNewConversation}
               className="w-full px-3.5 py-2.5 rounded-lg text-teal-light text-sm font-medium flex items-center justify-center gap-2 transition-colors"
               style={{
-                  clipPath: 'inset(25% 0 25% 0)',
                 background: 'rgba(14, 165, 233, 0.1)',
                 border: '1px solid rgba(14, 165, 233, 0.2)',
               }}
@@ -246,8 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           {/* User Profile Section with Dropdown */}
           <div
             className="relative px-4 py-4"
-            style={{
-                  clipPath: 'inset(25% 0 25% 0)', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
+            style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
           >
             {/* Dropdown Menu */}
             {showUserMenu && (
