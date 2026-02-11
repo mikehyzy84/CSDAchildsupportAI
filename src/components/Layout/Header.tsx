@@ -23,7 +23,7 @@ const Header: React.FC = () => {
               <img
                 src="/ChildSupportIQ%20Logo.png"
                 alt="ChildSupportIQ Logo"
-                className="h-12 w-auto object-contain"
+                className="h-12 w-auto object-cover" style={{ clipPath: 'inset(25% 0 25% 0)' }}
                 style={{
                   
                   
