@@ -11,12 +11,23 @@ import {
   Bot,
   User,
   Loader2,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
+
+interface Citation {
+  id: number;
+  title: string;
+  section: string;
+  source: string;
+  url: string | null;
+}
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  citations?: Citation[];
 }
 
 const EXAMPLE_QUESTIONS = [
@@ -190,6 +201,7 @@ const Chat: React.FC = () => {
         role: 'assistant',
         content: data.answer || 'Sorry, I could not generate a response.',
         timestamp: new Date(),
+        citations: data.citations || [],
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
@@ -384,6 +396,37 @@ const Chat: React.FC = () => {
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+
+                    {/* Citations - only for assistant messages */}
+                    {msg.role === 'assistant' && msg.citations && msg.citations.length > 0 && (
+                      <div className="mt-4 pt-3 border-t border-gray-200">
+                        <p className="text-xs font-semibold text-gray-700 mb-2">Sources ({msg.citations.length}):</p>
+                        <div className="space-y-2">
+                          {msg.citations.map((citation) => (
+                            <div
+                              key={citation.id}
+                              className="flex items-start gap-2 p-2 bg-amber-50 rounded border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer group"
+                              onClick={() => {
+                                if (citation.url) {
+                                  window.open(citation.url, '_blank', 'noopener,noreferrer');
+                                }
+                              }}
+                            >
+                              <FileText className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium text-gray-900 truncate">{citation.title}</p>
+                                <p className="text-xs text-gray-600">{citation.section}</p>
+                                <p className="text-xs text-gray-500 italic">{citation.source}</p>
+                              </div>
+                              {citation.url && (
+                                <ExternalLink className="h-3 w-3 text-amber-600 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-amber-100' : 'text-gray-500'}`}>
                       {msg.timestamp.toLocaleTimeString()}
                     </p>
