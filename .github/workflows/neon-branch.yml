@@ -68,7 +68,7 @@ jobs:
       - name: Import seed data
         run: |
           echo "🌱 Importing seed data to preview database..."
-          for file in db/seed-part1.sql db/seed-part2.sql db/seed-part3.sql db/seed-part4.sql db/seed-sourcebook.sql db/seed-new-docs.sql; do
+          for file in db/create-users-table.sql db/seed-part1.sql db/seed-part2.sql db/seed-part3.sql db/seed-part4.sql db/seed-sourcebook.sql db/seed-new-docs.sql; do
             if [ -f "$file" ]; then
               echo "📄 Importing $file..."
               psql "${{ steps.create_neon_branch.outputs.db_url_with_pooler }}" -f "$file"

@@ -13,6 +13,7 @@ const path = require('path');
 
 // Seed files to import in order
 const seedFiles = [
+  'db/create-users-table.sql',
   'db/seed-part1.sql',
   'db/seed-part2.sql',
   'db/seed-part3.sql',
