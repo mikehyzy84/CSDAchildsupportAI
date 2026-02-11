@@ -168,10 +168,10 @@ export default async function handler(
           d.source,
           d.source_url,
           CASE
-            WHEN c.search_vector IS NOT NULL THEN ts_rank(c.search_vector, websearch_to_tsquery('english', ${question}))
             WHEN d.section ILIKE '%fresno%' OR d.title ILIKE '%fresno%' OR d.source ILIKE '%fresno%' THEN 1.0
             WHEN d.section ILIKE '%los angeles%' OR d.title ILIKE '%los angeles%' OR d.source ILIKE '%los angeles%' THEN 1.0
             WHEN d.section ILIKE '%san diego%' OR d.title ILIKE '%san diego%' OR d.source ILIKE '%san diego%' THEN 1.0
+            WHEN c.search_vector IS NOT NULL THEN ts_rank(c.search_vector, websearch_to_tsquery('english', ${question}))
             ELSE 0.5
           END as rank
         FROM documents d
