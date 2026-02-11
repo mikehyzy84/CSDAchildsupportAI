@@ -158,25 +158,26 @@ export default async function handler(
     let searchResults: SearchResult[] = [];
     try {
       searchResults = await sql<SearchResult[]>`
-        SELECT
-          c.id,
-          c.document_id,
-          c.content,
-          c.section_title,
-          c.chunk_index,
+        SELECT DISTINCT ON (d.id)
+          COALESCE(c.id::text, d.id::text || '-doc') as id,
+          d.id as document_id,
+          COALESCE(c.content, d.title || E'\n\nSection: ' || COALESCE(d.section, 'N/A') || E'\n\nThis document is available. Search for specific topics within this document for more detailed information.') as content,
+          COALESCE(c.section_title, d.section, 'General') as section_title,
+          COALESCE(c.chunk_index, 0) as chunk_index,
           d.title,
           d.source,
           d.source_url,
-          GREATEST(
-            ts_rank(c.search_vector, websearch_to_tsquery('english', ${question})),
-            CASE WHEN d.source ILIKE '%fresno%' OR d.title ILIKE '%fresno%' OR d.section ILIKE '%fresno%' THEN 1.0 ELSE 0 END,
-            CASE WHEN d.source ILIKE '%los angeles%' OR d.title ILIKE '%los angeles%' OR d.section ILIKE '%los angeles%' THEN 1.0 ELSE 0 END,
-            CASE WHEN d.source ILIKE '%san diego%' OR d.title ILIKE '%san diego%' OR d.section ILIKE '%san diego%' THEN 1.0 ELSE 0 END
-          ) as rank
-        FROM chunks c
-        JOIN documents d ON c.document_id = d.id
+          CASE
+            WHEN c.search_vector IS NOT NULL THEN ts_rank(c.search_vector, websearch_to_tsquery('english', ${question}))
+            WHEN d.section ILIKE '%fresno%' OR d.title ILIKE '%fresno%' OR d.source ILIKE '%fresno%' THEN 1.0
+            WHEN d.section ILIKE '%los angeles%' OR d.title ILIKE '%los angeles%' OR d.source ILIKE '%los angeles%' THEN 1.0
+            WHEN d.section ILIKE '%san diego%' OR d.title ILIKE '%san diego%' OR d.source ILIKE '%san diego%' THEN 1.0
+            ELSE 0.5
+          END as rank
+        FROM documents d
+        LEFT JOIN chunks c ON c.document_id = d.id
         WHERE (
-          c.search_vector @@ websearch_to_tsquery('english', ${question})
+          (c.search_vector IS NOT NULL AND c.search_vector @@ websearch_to_tsquery('english', ${question}))
           OR c.content ILIKE '%fresno%'
           OR c.content ILIKE '%los angeles%'
           OR c.content ILIKE '%san diego%'
@@ -191,7 +192,7 @@ export default async function handler(
           OR d.source ILIKE '%san diego%'
         )
         AND d.status = 'completed'
-        ORDER BY rank DESC
+        ORDER BY d.id, rank DESC
         LIMIT 20
       `;
 
