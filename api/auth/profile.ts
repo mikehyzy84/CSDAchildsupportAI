@@ -72,14 +72,11 @@ export default async function handler(
       }
     }
 
-    // Build update query
+    // Build update query parts
     const updates: string[] = [];
-    const values: any[] = [];
-    let paramIndex = 1;
 
     if (name !== undefined) {
-      updates.push(`name = $${paramIndex++}`);
-      values.push(name);
+      updates.push(`name = '${name.replace(/'/g, "''")}'`);
     }
 
     if (email !== undefined) {
@@ -92,24 +89,20 @@ export default async function handler(
         return res.status(400).json({ error: 'Email is already in use' });
       }
 
-      updates.push(`email = $${paramIndex++}`);
-      values.push(email.toLowerCase());
+      updates.push(`email = '${email.toLowerCase().replace(/'/g, "''")}'`);
     }
 
     if (county !== undefined) {
-      updates.push(`county = $${paramIndex++}`);
-      values.push(county || null);
+      updates.push(`county = ${county ? `'${county.replace(/'/g, "''")}'` : 'NULL'}`);
     }
 
     if (password) {
       const passwordHash = await bcrypt.hash(password, 10);
-      updates.push(`password_hash = $${paramIndex++}`);
-      values.push(passwordHash);
+      updates.push(`password_hash = '${passwordHash.replace(/'/g, "''")}'`);
     }
 
     if (profile_picture !== undefined) {
-      updates.push(`profile_picture = $${paramIndex++}`);
-      values.push(profile_picture || null);
+      updates.push(`profile_picture = ${profile_picture ? `'${profile_picture.replace(/'/g, "''")}'` : 'NULL'}`);
     }
 
     if (updates.length === 0) {
@@ -118,17 +111,15 @@ export default async function handler(
 
     updates.push(`updated_at = CURRENT_TIMESTAMP`);
 
-    // Perform update using parameterized query to avoid SQL injection
+    // Perform update using string interpolation
     const query = `
       UPDATE users
       SET ${updates.join(', ')}
-      WHERE id = $${paramIndex}
+      WHERE id = '${userId}'
       RETURNING id, email, name, role, county, active, profile_picture, created_at, last_login
     `;
 
-    values.push(userId);
-
-    const result = await sql(query, values);
+    const result = await sql(query);
 
     return res.status(200).json({
       success: true,
