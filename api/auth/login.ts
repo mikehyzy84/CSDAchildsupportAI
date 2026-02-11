@@ -29,7 +29,7 @@ export default async function handler(
 
     // Find user by email
     const userResult = await sql`
-      SELECT id, email, password_hash, name, role, county, active
+      SELECT id, email, password_hash, name, role, county, active, profile_picture
       FROM users
       WHERE email = ${email.toLowerCase()}
       LIMIT 1
@@ -77,7 +77,8 @@ export default async function handler(
       name: user.name,
       role: user.role,
       county: user.county,
-      active: user.active
+      active: user.active,
+      profile_picture: user.profile_picture
     };
 
     // Set token as httpOnly cookie

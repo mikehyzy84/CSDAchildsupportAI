@@ -51,7 +51,7 @@ export default async function handler(
     // GET - List all users
     if (req.method === 'GET') {
       const usersResult = await sql`
-        SELECT id, email, name, role, county, active, created_at, last_login
+        SELECT id, email, name, role, county, active, profile_picture, created_at, last_login
         FROM users
         ORDER BY created_at DESC
       `;
@@ -105,7 +105,7 @@ export default async function handler(
           ${county || null},
           true
         )
-        RETURNING id, email, name, role, county, active, created_at
+        RETURNING id, email, name, role, county, active, profile_picture, created_at
       `;
 
       return res.status(201).json({
@@ -116,7 +116,7 @@ export default async function handler(
 
     // PUT - Update user
     if (req.method === 'PUT') {
-      const { id, email, name, role, county, active, password } = req.body;
+      const { id, email, name, role, county, active, password, profile_picture } = req.body;
 
       if (!id) {
         return res.status(400).json({ error: 'User ID is required' });
@@ -154,6 +154,7 @@ export default async function handler(
         const passwordHash = await bcrypt.hash(password, 10);
         updates.push(`password_hash = '${passwordHash}'`);
       }
+      if (profile_picture !== undefined) updates.push(`profile_picture = ${profile_picture ? `'${profile_picture.replace(/'/g, "''")}'` : 'NULL'}`);
 
       if (updates.length === 0) {
         return res.status(400).json({ error: 'No fields to update' });
@@ -163,7 +164,7 @@ export default async function handler(
         UPDATE users
         SET ${updates.join(', ')}
         WHERE id = '${id}'
-        RETURNING id, email, name, role, county, active, created_at, last_login
+        RETURNING id, email, name, role, county, active, profile_picture, created_at, last_login
       `;
 
       const updatedUser = await sql(query);

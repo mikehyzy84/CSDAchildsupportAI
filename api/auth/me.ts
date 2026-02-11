@@ -26,7 +26,7 @@ export default async function handler(
     const sessionResult = await sql`
       SELECT
         s.user_id, s.expires_at,
-        u.id, u.email, u.name, u.role, u.county, u.active
+        u.id, u.email, u.name, u.role, u.county, u.active, u.profile_picture
       FROM sessions s
       JOIN users u ON s.user_id = u.id
       WHERE s.token = ${token}
@@ -61,7 +61,8 @@ export default async function handler(
       name: user.name,
       role: user.role,
       county: user.county,
-      active: user.active
+      active: user.active,
+      profile_picture: user.profile_picture
     };
 
     return res.status(200).json({

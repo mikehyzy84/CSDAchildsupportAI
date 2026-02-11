@@ -69,6 +69,10 @@ const Profile: React.FC = () => {
         updateData.password = formData.newPassword;
       }
 
+      if (profilePicture) {
+        updateData.profile_picture = profilePicture;
+      }
+
       const response = await fetch('/api/auth/users', {
         method: 'PUT',
         headers: {

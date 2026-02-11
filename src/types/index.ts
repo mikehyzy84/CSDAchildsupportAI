@@ -36,6 +36,7 @@ export interface User {
   role: 'Worker' | 'Supervisor' | 'Manager' | 'Admin';
   county?: string;
   active: boolean;
+  profile_picture?: string;
   created_at?: string;
   last_login?: string;
 }

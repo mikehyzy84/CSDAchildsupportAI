@@ -286,11 +286,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
               className="w-full flex items-center gap-3 hover:bg-white/5 rounded-lg p-2 transition-colors"
             >
               <div className="flex-shrink-0">
-                <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-teal">
-                    {getUserInitials()}
-                  </span>
-                </div>
+                {user?.profile_picture ? (
+                  <img
+                    src={user.profile_picture}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center">
+                    <span className="text-sm font-semibold text-teal">
+                      {getUserInitials()}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-medium text-white truncate">
