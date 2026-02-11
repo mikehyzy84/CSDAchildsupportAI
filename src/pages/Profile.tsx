@@ -24,14 +24,40 @@ const Profile: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image must be less than 5MB');
+      if (file.size > 2 * 1024 * 1024) {
+        setError('Image must be less than 2MB');
         return;
       }
 
+      // Create image element to resize if needed
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfilePicture(reader.result as string);
+        const img = new Image();
+        img.onload = () => {
+          // Resize if image is too large
+          const maxWidth = 800;
+          const maxHeight = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width *= ratio;
+            height *= ratio;
+          }
+
+          // Create canvas and resize
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression
+          const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          setProfilePicture(resizedBase64);
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -172,7 +198,7 @@ const Profile: React.FC = () => {
 
               <p className="text-xs text-gray-500 mt-3 text-center">
                 Click camera icon to upload<br />
-                Max size: 5MB
+                Max size: 2MB (auto-resized)
               </p>
             </div>
           </div>
