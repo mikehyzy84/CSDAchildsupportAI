@@ -36,7 +36,7 @@ const Login: React.FC = () => {
             alt="ChildSupportIQ Logo"
             className="mx-auto h-24 w-auto mb-6"
             style={{
-              filter: 'brightness(0) invert(1)',
+              
             }}
           />
           <h2 className="text-3xl font-bold text-white mb-2">
