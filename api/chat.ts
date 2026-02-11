@@ -167,18 +167,32 @@ export default async function handler(
           d.title,
           d.source,
           d.source_url,
-          ts_rank(c.search_vector, websearch_to_tsquery('english', ${question})) as rank
+          GREATEST(
+            ts_rank(c.search_vector, websearch_to_tsquery('english', ${question})),
+            CASE WHEN d.source ILIKE '%fresno%' OR d.title ILIKE '%fresno%' OR d.section ILIKE '%fresno%' THEN 1.0 ELSE 0 END,
+            CASE WHEN d.source ILIKE '%los angeles%' OR d.title ILIKE '%los angeles%' OR d.section ILIKE '%los angeles%' THEN 1.0 ELSE 0 END,
+            CASE WHEN d.source ILIKE '%san diego%' OR d.title ILIKE '%san diego%' OR d.section ILIKE '%san diego%' THEN 1.0 ELSE 0 END
+          ) as rank
         FROM chunks c
         JOIN documents d ON c.document_id = d.id
         WHERE (
           c.search_vector @@ websearch_to_tsquery('english', ${question})
-          OR to_tsvector('english', COALESCE(d.section, '')) @@ websearch_to_tsquery('english', ${question})
-          OR to_tsvector('english', d.title) @@ websearch_to_tsquery('english', ${question})
-          OR to_tsvector('english', d.source) @@ websearch_to_tsquery('english', ${question})
+          OR c.content ILIKE '%fresno%'
+          OR c.content ILIKE '%los angeles%'
+          OR c.content ILIKE '%san diego%'
+          OR d.section ILIKE '%fresno%'
+          OR d.title ILIKE '%fresno%'
+          OR d.source ILIKE '%fresno%'
+          OR d.section ILIKE '%los angeles%'
+          OR d.title ILIKE '%los angeles%'
+          OR d.source ILIKE '%los angeles%'
+          OR d.section ILIKE '%san diego%'
+          OR d.title ILIKE '%san diego%'
+          OR d.source ILIKE '%san diego%'
         )
         AND d.status = 'completed'
         ORDER BY rank DESC
-        LIMIT 8
+        LIMIT 20
       `;
 
       // DEBUG: Log database search results (development only)
