@@ -174,7 +174,7 @@ export default async function handler(
           c.search_vector @@ websearch_to_tsquery('english', ${question})
           OR to_tsvector('english', COALESCE(d.section, '')) @@ websearch_to_tsquery('english', ${question})
           OR to_tsvector('english', d.title) @@ websearch_to_tsquery('english', ${question})
-          OR d.source ILIKE '%' || ${question} || '%'
+          OR to_tsvector('english', d.source) @@ websearch_to_tsquery('english', ${question})
         )
         AND d.status = 'completed'
         ORDER BY rank DESC
