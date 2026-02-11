@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_users_active ON users(active);
 INSERT INTO users (email, password_hash, name, role, county, active)
 VALUES (
   'admin@childsupportiq.com',
-  '$2b$10$rGfVZxV8Q9YKH7qH8v5qyuZ9pL4xH7Y5XJ9nX8Z7qH8v5qyuZ9pL4',
+  '$2b$10$MAt3E/shbxZ6tTI3NbS4GOaIyYfqhrgv00H4uDfTuanqTS71uUdJ.',
   'System Administrator',
   'Admin',
   'State Office',
