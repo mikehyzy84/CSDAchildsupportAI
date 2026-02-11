@@ -172,8 +172,9 @@ export default async function handler(
         JOIN documents d ON c.document_id = d.id
         WHERE (
           c.search_vector @@ websearch_to_tsquery('english', ${question})
-          OR d.section ILIKE '%' || ${question} || '%'
-          OR d.title ILIKE '%' || ${question} || '%'
+          OR to_tsvector('english', COALESCE(d.section, '')) @@ websearch_to_tsquery('english', ${question})
+          OR to_tsvector('english', d.title) @@ websearch_to_tsquery('english', ${question})
+          OR d.source ILIKE '%' || ${question} || '%'
         )
         AND d.status = 'completed'
         ORDER BY rank DESC
