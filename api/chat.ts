@@ -191,7 +191,6 @@ export default async function handler(
           OR d.title ILIKE '%san diego%'
           OR d.source ILIKE '%san diego%'
         )
-        AND d.status = 'completed'
         ORDER BY d.id, rank DESC
         LIMIT 20
       `;
