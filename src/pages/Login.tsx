@@ -34,10 +34,8 @@ const Login: React.FC = () => {
           <img
             src="/ChildSupportIQ%20Logo.png"
             alt="ChildSupportIQ Logo"
-            className="mx-auto h-24 w-auto mb-6" style={{ clipPath: 'inset(25% 0 25% 0)' }}
-            style={{
-              
-            }}
+            className="mx-auto h-24 w-auto mb-6"
+            style={{ clipPath: 'inset(25% 0 25% 0)' }}
           />
           <h2 className="text-3xl font-bold text-white mb-2">
             ChildSupportIQ

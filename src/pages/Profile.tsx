@@ -59,7 +59,6 @@ const Profile: React.FC = () => {
 
       // Update profile
       const updateData: any = {
-        id: user?.id,
         name: formData.name,
         email: formData.email,
         county: formData.county,
@@ -67,13 +66,17 @@ const Profile: React.FC = () => {
 
       if (formData.newPassword) {
         updateData.password = formData.newPassword;
+        updateData.currentPassword = formData.currentPassword;
       }
 
       if (profilePicture) {
         updateData.profile_picture = profilePicture;
+      } else if (user?.profile_picture) {
+        // Keep existing profile picture if not changed
+        updateData.profile_picture = user.profile_picture;
       }
 
-      const response = await fetch('/api/auth/users', {
+      const response = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
