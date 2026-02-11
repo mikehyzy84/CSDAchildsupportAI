@@ -1,11 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import pkg from 'pg';
-const { Pool } = pkg;
+import { neon } from '@neondatabase/serverless';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
+const sql = neon(process.env.DATABASE_URL!);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers
@@ -24,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Fetch all documents from the database
-    const result = await pool.query(`
+    const result = await sql`
       SELECT
         id,
         title,
@@ -40,11 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         END,
         title ASC
       LIMIT 1000
-    `);
+    `;
 
     return res.status(200).json({
-      documents: result.rows,
-      count: result.rows.length,
+      documents: result,
+      count: result.length,
     });
   } catch (error) {
     console.error('Error fetching documents:', error);

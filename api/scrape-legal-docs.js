@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import { neon } from '@neondatabase/serverless';
 import cheerio from 'cheerio';
 
 /**
@@ -116,28 +116,26 @@ async function scrapeUrl(url) {
 /**
  * Store document and chunks in database
  */
-async function storeDocument(client, title, source, sourceUrl, section, content) {
+async function storeDocument(sql, title, source, sourceUrl, section, content) {
   try {
     // Insert document
-    const docResult = await client.query(
-      `INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, 'completed', NOW(), NOW())
-       RETURNING id`,
-      [title, source, sourceUrl, section]
-    );
+    const docResult = await sql`
+      INSERT INTO documents (title, source, source_url, section, status, created_at, updated_at)
+      VALUES (${title}, ${source}, ${sourceUrl}, ${section}, 'completed', NOW(), NOW())
+      RETURNING id
+    `;
 
-    const documentId = docResult.rows[0].id;
+    const documentId = docResult[0].id;
 
     // Chunk the content
     const chunks = chunkText(content);
 
     // Insert chunks
     for (let i = 0; i < chunks.length; i++) {
-      await client.query(
-        `INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
-         VALUES ($1, $2, $3, $4, to_tsvector('english', $2), NOW())`,
-        [documentId, chunks[i], title, i]
-      );
+      await sql`
+        INSERT INTO chunks (document_id, content, section_title, chunk_index, search_vector, created_at)
+        VALUES (${documentId}, ${chunks[i]}, ${title}, ${i}, to_tsvector('english', ${chunks[i]}), NOW())
+      `;
     }
 
     return { documentId, chunkCount: chunks.length };
@@ -162,10 +160,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+  const sql = neon(process.env.DATABASE_URL);
 
   const results = {
     success: [],
@@ -175,8 +170,6 @@ export default async function handler(req, res) {
   };
 
   try {
-    await client.connect();
-
     // Process custom URLs from request body if provided
     const customSources = req.body?.sources || SOURCES;
 
@@ -198,7 +191,7 @@ export default async function handler(req, res) {
         const title = source.title || new URL(source.url).pathname.split('/').filter(Boolean).pop() || 'Untitled Document';
 
         const result = await storeDocument(
-          client,
+          sql,
           title,
           source.type,
           source.url,
@@ -234,7 +227,5 @@ export default async function handler(req, res) {
       message: error.message,
       results
     });
-  } finally {
-    await client.end();
   }
 }

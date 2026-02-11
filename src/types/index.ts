@@ -37,10 +37,6 @@ export interface User {
   active: boolean;
 }
 
-export interface SearchMode {
-  mode: 'summary' | 'steps';
-}
-
 export interface Citation {
   id: number;
   title: string;
@@ -54,14 +50,6 @@ export interface Message {
   content: string;
   timestamp: Date;
   citations?: Citation[];
-}
-
-export interface Analytics {
-  total_searches_today: number;
-  total_searches_week: number;
-  total_searches_month: number;
-  top_searches: { query: string; count: number }[];
-  user_activity: { date: string; searches: number }[];
 }
 
 export interface CountyInfo {
