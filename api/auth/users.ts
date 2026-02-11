@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import bcrypt from 'bcryptjs';
+
+const sql = neon(process.env.DATABASE_URL!);
 
 // Helper function to verify admin access
 async function verifyAdminAccess(req: VercelRequest): Promise<{ authorized: boolean; userId?: string; userRole?: string }> {
@@ -21,11 +23,11 @@ async function verifyAdminAccess(req: VercelRequest): Promise<{ authorized: bool
     LIMIT 1
   `;
 
-  if (sessionResult.rows.length === 0) {
+  if (sessionResult.length === 0) {
     return { authorized: false };
   }
 
-  const session = sessionResult.rows[0];
+  const session = sessionResult[0];
 
   // Only Admin and Manager can manage users
   if (session.role !== 'Admin' && session.role !== 'Manager') {
@@ -56,7 +58,7 @@ export default async function handler(
 
       return res.status(200).json({
         success: true,
-        users: usersResult.rows
+        users: usersResult
       });
     }
 
@@ -85,7 +87,7 @@ export default async function handler(
         SELECT id FROM users WHERE email = ${email.toLowerCase()} LIMIT 1
       `;
 
-      if (existingUser.rows.length > 0) {
+      if (existingUser.length > 0) {
         return res.status(400).json({ error: 'Email already exists' });
       }
 
@@ -108,7 +110,7 @@ export default async function handler(
 
       return res.status(201).json({
         success: true,
-        user: newUser.rows[0]
+        user: newUser[0]
       });
     }
 
@@ -125,67 +127,50 @@ export default async function handler(
         SELECT id, role FROM users WHERE id = ${id} LIMIT 1
       `;
 
-      if (existingUser.rows.length === 0) {
+      if (existingUser.length === 0) {
         return res.status(404).json({ error: 'User not found' });
       }
 
       // Only Admin can modify Admin users or change role to Admin
-      if ((existingUser.rows[0].role === 'Admin' || role === 'Admin') && authCheck.userRole !== 'Admin') {
+      if ((existingUser[0].role === 'Admin' || role === 'Admin') && authCheck.userRole !== 'Admin') {
         return res.status(403).json({ error: 'Only Admin users can modify Admin accounts' });
       }
 
-      // Build update query dynamically
+      // Build update parts
       const updates: string[] = [];
-      const values: any[] = [];
-      let paramIndex = 1;
-
-      if (email !== undefined) {
-        updates.push(`email = $${paramIndex++}`);
-        values.push(email.toLowerCase());
-      }
-      if (name !== undefined) {
-        updates.push(`name = $${paramIndex++}`);
-        values.push(name);
-      }
+      
+      if (email !== undefined) updates.push(`email = '${email.toLowerCase()}'`);
+      if (name !== undefined) updates.push(`name = '${name}'`);
       if (role !== undefined) {
         const validRoles = ['Worker', 'Supervisor', 'Manager', 'Admin'];
         if (!validRoles.includes(role)) {
           return res.status(400).json({ error: 'Invalid role' });
         }
-        updates.push(`role = $${paramIndex++}`);
-        values.push(role);
+        updates.push(`role = '${role}'`);
       }
-      if (county !== undefined) {
-        updates.push(`county = $${paramIndex++}`);
-        values.push(county || null);
-      }
-      if (active !== undefined) {
-        updates.push(`active = $${paramIndex++}`);
-        values.push(active);
-      }
+      if (county !== undefined) updates.push(`county = ${county ? `'${county}'` : 'NULL'}`);
+      if (active !== undefined) updates.push(`active = ${active}`);
       if (password) {
         const passwordHash = await bcrypt.hash(password, 10);
-        updates.push(`password_hash = $${paramIndex++}`);
-        values.push(passwordHash);
+        updates.push(`password_hash = '${passwordHash}'`);
       }
 
       if (updates.length === 0) {
         return res.status(400).json({ error: 'No fields to update' });
       }
 
-      values.push(id);
       const query = `
         UPDATE users
         SET ${updates.join(', ')}
-        WHERE id = $${paramIndex}
+        WHERE id = '${id}'
         RETURNING id, email, name, role, county, active, created_at, last_login
       `;
 
-      const updatedUser = await sql.query(query, values);
+      const updatedUser = await sql(query);
 
       return res.status(200).json({
         success: true,
-        user: updatedUser.rows[0]
+        user: updatedUser[0]
       });
     }
 
@@ -202,17 +187,17 @@ export default async function handler(
         SELECT id, role FROM users WHERE id = ${id} LIMIT 1
       `;
 
-      if (existingUser.rows.length === 0) {
+      if (existingUser.length === 0) {
         return res.status(404).json({ error: 'User not found' });
       }
 
       // Only Admin can delete Admin users
-      if (existingUser.rows[0].role === 'Admin' && authCheck.userRole !== 'Admin') {
+      if (existingUser[0].role === 'Admin' && authCheck.userRole !== 'Admin') {
         return res.status(403).json({ error: 'Only Admin users can delete Admin accounts' });
       }
 
       // Prevent deleting self
-      if (existingUser.rows[0].id === authCheck.userId) {
+      if (existingUser[0].id === authCheck.userId) {
         return res.status(400).json({ error: 'Cannot delete your own account' });
       }
 

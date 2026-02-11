@@ -1,7 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+
+const sql = neon(process.env.DATABASE_URL!);
 
 interface LoginRequest {
   email: string;
@@ -33,11 +35,11 @@ export default async function handler(
       LIMIT 1
     `;
 
-    if (userResult.rows.length === 0) {
+    if (userResult.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const user = userResult.rows[0];
+    const user = userResult[0];
 
     // Check if user is active
     if (!user.active) {
@@ -88,6 +90,6 @@ export default async function handler(
     });
   } catch (error) {
     console.error('Login error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) });
   }
 }

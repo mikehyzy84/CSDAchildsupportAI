@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.DATABASE_URL!);
 
 export default async function handler(
   req: VercelRequest,
@@ -32,13 +34,13 @@ export default async function handler(
       LIMIT 1
     `;
 
-    if (sessionResult.rows.length === 0) {
+    if (sessionResult.length === 0) {
       // Invalid or expired session
       res.setHeader('Set-Cookie', 'auth_token=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0');
       return res.status(401).json({ error: 'Session expired or invalid' });
     }
 
-    const user = sessionResult.rows[0];
+    const user = sessionResult[0];
 
     // Check if user is active
     if (!user.active) {
