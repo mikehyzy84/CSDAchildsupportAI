@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, FileText, Settings, Plus, Bot, Clock } from 'lucide-react';
+import { MessageSquare, FileText, Settings, Plus, Bot, Clock, User as UserIcon, LogOut, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ChatSession {
@@ -18,9 +18,10 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [recentChats, setRecentChats] = useState<ChatSession[]>([]);
   const [isLoadingChats, setIsLoadingChats] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const navItems = [
     { path: '/', label: 'Ask ChildSupportIQ', icon: Bot },
@@ -239,12 +240,47 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             )}
           </div>
 
-          {/* User Profile Section */}
+          {/* User Profile Section with Dropdown */}
           <div
-            className="px-4 py-4"
+            className="relative px-4 py-4"
             style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
           >
-            <div className="flex items-center gap-3">
+            {/* Dropdown Menu */}
+            {showUserMenu && (
+              <div
+                className="absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg py-2 z-50"
+                onMouseLeave={() => setShowUserMenu(false)}
+              >
+                <Link
+                  to="/profile"
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    onToggle?.();
+                  }}
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <UserIcon size={16} />
+                  <span>Profile Settings</span>
+                </Link>
+                <button
+                  onClick={async () => {
+                    setShowUserMenu(false);
+                    await logout();
+                    navigate('/login');
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+
+            {/* User Info Button */}
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="w-full flex items-center gap-3 hover:bg-white/5 rounded-lg p-2 transition-colors"
+            >
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center">
                   <span className="text-sm font-semibold text-teal">
@@ -252,7 +288,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                   </span>
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-medium text-white truncate">
                   {user?.name || 'User'}
                 </p>
@@ -263,7 +299,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                   {getCountyDisplay()}
                 </p>
               </div>
-            </div>
+              <ChevronUp
+                size={16}
+                className={`text-white/60 transition-transform ${showUserMenu ? 'rotate-0' : 'rotate-180'}`}
+              />
+            </button>
           </div>
         </div>
       </aside>

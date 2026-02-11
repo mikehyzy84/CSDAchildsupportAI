@@ -11,6 +11,7 @@ import Admin from './pages/Admin';
 import Reports from './pages/Reports';
 import ReportPreview from './pages/ReportPreview';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import './styles/california-theme.css';
@@ -43,6 +44,7 @@ function App() {
                 <Route path="policy/:id" element={<PolicyDetail />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="report-preview" element={<ReportPreview />} />
+                <Route path="profile" element={<Profile />} />
 
                 {/* Admin route - requires Admin or Manager role */}
                 <Route path="admin" element={
