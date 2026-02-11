@@ -1,4 +1,4 @@
-import { Policy, SearchQuery, Annotation, User, Analytics } from '../types';
+import { Policy, Annotation, User, CountyInfo } from '../types';
 
 export const samplePolicies: Policy[] = [
   {
@@ -193,46 +193,6 @@ export const samplePolicies: Policy[] = [
   }
 ];
 
-export const sampleQueries: Record<string, SearchQuery> = {
-  "calculate child support": {
-    summary: "Child support calculation varies by state but follows established models. The CSDA provides comprehensive guidance on Income Shares, Percentage of Income, and Melson Formula approaches used across different jurisdictions.",
-    steps: [
-      "1. Identify the applicable state's calculation model and guidelines",
-      "2. Determine each parent's gross income from all sources",
-      "3. Apply state-specific deductions and adjustments",
-      "4. Calculate base support obligation using appropriate formula",
-      "5. Consider parenting time adjustments per state guidelines",
-      "6. Add mandatory add-ons (childcare, health insurance, etc.)",
-      "7. Apply any appropriate deviations or special circumstances"
-    ],
-    relevant_policies: ['1', '5']
-  },
-  "enforcement procedures": {
-    summary: "Child support enforcement follows federal requirements with state-specific implementations. The CSDA provides best practices for utilizing the full range of enforcement tools effectively and efficiently.",
-    steps: [
-      "1. Implement immediate income withholding for all orders",
-      "2. Use automated enforcement tools (tax offset, FIDM, etc.)",
-      "3. Apply administrative enforcement remedies systematically",
-      "4. Coordinate interstate enforcement through proper channels",
-      "5. Utilize asset discovery and seizure procedures",
-      "6. Implement license suspension programs effectively",
-      "7. Use judicial enforcement as appropriate"
-    ],
-    relevant_policies: ['2', '4']
-  },
-  "interstate case": {
-    summary: "Interstate cases require careful attention to UIFSA procedures and jurisdictional requirements. The CSDA provides comprehensive guidance for effective interstate case management and coordination.",
-    steps: [
-      "1. Determine which state has continuing exclusive jurisdiction",
-      "2. Follow proper UIFSA procedures for case processing",
-      "3. Coordinate effectively between initiating and responding states",
-      "4. Use appropriate interstate enforcement mechanisms",
-      "5. Maintain proper documentation and communication",
-      "6. Apply CSDA best practices for interstate coordination"
-    ],
-    relevant_policies: ['4', '2']
-  }
-};
 
 export const sampleAnnotations: Annotation[] = [
   {
@@ -311,33 +271,6 @@ export const sampleUsers: User[] = [
     active: true
   }
 ];
-
-export const sampleAnalytics: Analytics = {
-  total_searches_today: 47,
-  total_searches_week: 312,
-  total_searches_month: 1456,
-  top_searches: [
-    { query: 'calculate child support', count: 89 },
-    { query: 'enforcement procedures', count: 67 },
-    { query: 'interstate case', count: 45 },
-    { query: 'modification requirements', count: 38 },
-    { query: 'medical support', count: 32 },
-    { query: 'wage garnishment', count: 28 },
-    { query: 'arrears calculation', count: 24 },
-    { query: 'passport denial', count: 19 },
-    { query: 'license suspension', count: 15 },
-    { query: 'UIFSA procedures', count: 12 }
-  ],
-  user_activity: [
-    { date: '2024-01-15', searches: 52 },
-    { date: '2024-01-16', searches: 48 },
-    { date: '2024-01-17', searches: 61 },
-    { date: '2024-01-18', searches: 55 },
-    { date: '2024-01-19', searches: 47 },
-    { date: '2024-01-20', searches: 43 },
-    { date: '2024-01-21', searches: 38 }
-  ]
-};
 
 export const californiaCounties: CountyInfo[] = [
   {

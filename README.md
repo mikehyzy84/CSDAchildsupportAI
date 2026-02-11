@@ -16,6 +16,8 @@ This system provides California child support directors and their staff with:
 ## Technology Stack
 - React 18 with TypeScript
 - Tailwind CSS for styling
-- Supabase for data management
-- OpenAI integration for AI-powered features
+- Anthropic Claude API for AI-powered features
+- Neon Postgres (serverless) for data management
+- ElevenLabs for voice agent and knowledge base
 - Vite for development and building
+- Deployed on Vercel
