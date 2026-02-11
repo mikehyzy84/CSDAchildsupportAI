@@ -35,6 +35,9 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onStarterClick }) =
               src="/ChildSupportIQ%20Logo.png"
               alt="ChildSupportIQ Logo"
               className="w-[120px] h-auto"
+              style={{
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.1))',
+              }}
             />
           </div>
 

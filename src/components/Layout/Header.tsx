@@ -24,6 +24,10 @@ const Header: React.FC = () => {
                 src="/ChildSupportIQ%20Logo.png"
                 alt="ChildSupportIQ Logo"
                 className="h-12 w-auto object-contain"
+                style={{
+                  mixBlendMode: 'multiply',
+                  filter: 'brightness(0) invert(1)',
+                }}
               />
             </div>
             <div className="hidden sm:block min-w-0">

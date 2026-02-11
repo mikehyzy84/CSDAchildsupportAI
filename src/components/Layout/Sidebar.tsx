@@ -136,6 +136,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
                   width: '180px',
                   height: 'auto',
                   objectFit: 'contain',
+                  mixBlendMode: 'multiply',
+                  filter: 'brightness(0) invert(1)',
                 }}
               />
             </div>
