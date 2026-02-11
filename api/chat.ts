@@ -217,18 +217,20 @@ export default async function handler(
 
     log.debug('Search confidence:', confidence, `(${searchResults.length} results)`);
 
-    // Build context from search results (or indicate no results)
+    // Build context from search results with clear structure
     const context = searchResults.length > 0
       ? searchResults
-          .map((result) => {
-            const sourceLabel = `${result.title}${result.section_title ? ' - ' + result.section_title : ''}`;
-            return `[${sourceLabel}]
+          .map((result, idx) => {
+            return `DOCUMENT ${idx + 1}: ${result.title}
 Source: ${result.source}
-Content: ${result.content}
+Section: ${result.section_title || 'General'}
+
+${result.content}
+
 ---`;
           })
           .join('\n\n')
-      : 'No matching policy documents found in database';
+      : 'No policy documents were retrieved from the database.';
 
     // Prepare citations for response
     const citations = searchResults.map((result, idx) => ({
@@ -239,36 +241,39 @@ Content: ${result.content}
       url: result.source_url || null,
     }));
 
-    // System prompt for CSDAI - confidence-aware and always helpful
-    const systemPrompt = `You are CSDAI (Child Support Directors Association Intelligence), an AI assistant helping California child support caseworkers find accurate policy guidance.
+    // System prompt - direct and assertive
+    const systemPrompt = `You are ChildSupportIQ, the California Child Support Directors Association AI assistant. You help caseworkers, attorneys, and child support professionals with policy questions.
 
-Your role: Answer questions using California Family Code, federal regulations (Title IV-D, UIFSA), and DCSS policies. Provide citations for all factual claims.
+CRITICAL INSTRUCTIONS:
 
-RESPONSE GUIDELINES:
+1. RETRIEVED DOCUMENTS ARE YOUR SOURCE OF TRUTH
+   - Policy documents retrieved from the ChildSupportIQ knowledge base are provided below in <retrieved_sources>
+   - READ THEM CAREFULLY and base your answer on their content
+   - NEVER say "I don't have documents" or "I don't have information on this topic" if documents are present in <retrieved_sources>
+   - The documents ARE your authoritative source - treat them as such
 
-When you have strong source material (5+ documents):
-- Answer comprehensively and authoritatively
-- Cite every factual claim with [California Family Code § X] or [OCSE Handbook] format
-- Use the exact language from statutes when quoting legal text
-- Be thorough - caseworkers need complete guidance
+2. HOW TO USE RETRIEVED DOCUMENTS
+   - If documents are from a specific county (e.g., "Section: Fresno County"), acknowledge that explicitly
+   - Example: "According to Fresno County's Initial Pleading Practices..."
+   - Quote or paraphrase the document content directly
+   - Reference document titles when citing information
 
-When you have limited source material (1-4 documents):
-- Use what you have but acknowledge limitations
-- Say: "Based on the limited sources I found..."
-- Still cite what you use
-- Suggest related searches they should try
+3. RESPONSE STYLE
+   - Lead with the answer - be direct and actionable
+   - Caseworkers need clear guidance, not hedging
+   - If you have 1-4 relevant documents, that's ENOUGH - use them fully
+   - Only mention limitations if the documents truly don't address the question
+   - Format answers in clear paragraphs with inline citations like [Document Title]
 
-When you have no matching sources:
-- DO NOT refuse to answer
-- DO NOT say "I cannot help with that"
-- Instead say: "I don't have specific policy documents on this topic in my database yet."
-- Use your knowledge of CA child support law to explain the topic
-- Suggest specific searches: "Try searching for 'Family Code § 4055' or 'DCSS income withholding policy'"
-- Be conversational: "I think you're asking about X. Here's what I know..."
+4. WHEN DOCUMENTS DON'T FULLY ANSWER THE QUESTION
+   - Use what's provided first
+   - Then fill gaps with California child support law knowledge
+   - Suggest specific follow-up searches if helpful
 
-Why this matters: Caseworkers make critical decisions affecting children and families. They need both accuracy AND helpfulness. Being unhelpful when they have a question is worse than acknowledging uncertainty while providing context.
+5. ALWAYS END WITH
+   "This is policy guidance, not legal advice. Verify decisions with your supervisor or legal team."
 
-Output format: Clear paragraphs with inline citations [Source]. If uncertain about anything, explicitly say so. Always end with: "This is general policy guidance, not legal advice. Verify decisions with your supervisor or legal team."`;
+Remember: If documents are in <retrieved_sources>, you HAVE the information. Use it confidently.`;
 
     // Build user message with XML structure (Anthropic best practice)
     const responseInstruction = responseType === 'detailed'
@@ -290,17 +295,15 @@ Output format: Clear paragraphs with inline citations [Source]. If uncertain abo
         messages: [
           {
             role: 'user',
-            content: `<question>
+            content: `USER QUESTION:
 ${question}
-</question>
 
-<retrieved_sources>
+RETRIEVED POLICY DOCUMENTS (use these to answer):
 ${context}
-</retrieved_sources>
 
-<search_confidence>${confidence}</search_confidence>
-
-${responseInstruction}`
+${searchResults.length > 0
+  ? `You have ${searchResults.length} relevant document(s) above. Read them and provide a substantive answer based on their content. ${responseInstruction}`
+  : `No documents were found. Provide general California child support guidance and suggest specific searches.`}`
           }
         ]
       });
