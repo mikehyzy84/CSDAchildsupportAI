@@ -3,8 +3,13 @@ const path = require('path');
 const https = require('https');
 const crypto = require('crypto');
 
-const NETLIFY_TOKEN = 'nfp_STQ1StCmMQeXzrT4XprozmyXnxFVJo6Ef1a9';
-const SITE_ID = 'c257f8e7-f124-4707-bff5-3381ec336b6e';
+const NETLIFY_TOKEN = process.env.NETLIFY_TOKEN;
+const SITE_ID = process.env.NETLIFY_SITE_ID;
+
+if (!NETLIFY_TOKEN || !SITE_ID) {
+  console.error('Missing required env vars: NETLIFY_TOKEN, NETLIFY_SITE_ID');
+  process.exit(1);
+}
 const DIST_DIR = './dist';
 
 function sha1(data) {

@@ -61,15 +61,20 @@ const VoiceChat: React.FC = () => {
     },
   });
 
-  // Auto-connect on mount
+  // Auto-connect on mount via server-side signed URL (keeps agent ID secret)
   useEffect(() => {
     if (!hasAutoConnected.current) {
       hasAutoConnected.current = true;
       const connectSession = async () => {
         try {
-          await conversation.startSession({
-            agentId: 'agent_9101kh1pndn9f8arzdmrra4xc9jy',
-          });
+          // Request a short-lived signed URL from our backend
+          const res = await fetch('/api/elevenlabs-signed-url', { method: 'POST' });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `Signed URL request failed (${res.status})`);
+          }
+          const { signedUrl } = await res.json();
+          await conversation.startSession({ signedUrl });
         } catch (error) {
           console.error('Failed to auto-connect:', error);
           setIsInitializing(false);

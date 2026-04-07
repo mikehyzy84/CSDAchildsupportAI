@@ -5,7 +5,9 @@ import OpenAI from 'openai';
 const app = express();
 const port = 3001;
 
-// Initialize OpenAI client
+// DEPRECATED: This local Express server is superseded by Vercel serverless
+// functions in /api (which use Anthropic Claude). Kept for reference only.
+// If you need to run it, set OPENAI_API_KEY in your .env file.
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
