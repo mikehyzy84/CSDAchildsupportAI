@@ -1,3 +1,12 @@
+/**
+ * /api/sync — Scheduled document sync endpoint (GET / POST) [STUB]
+ *
+ * Intended to be called by the Vercel cron defined in vercel.json
+ * (daily at noon UTC). Will eventually re-scrape official sources and
+ * update the documents table. Currently returns a placeholder response.
+ *
+ * Connects to: nothing yet
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(

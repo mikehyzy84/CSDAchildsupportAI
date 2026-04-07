@@ -1,3 +1,13 @@
+/**
+ * generate-seed-sql.js — Single-PDF to SQL seed generator
+ *
+ * Takes a PDF file path as a CLI argument, extracts text with pdf-parse,
+ * chunks it into ~500-token pieces (1 token ≈ 4 chars), detects section
+ * headers via regex, and writes a complete SQL seed file to
+ * db/seed-sourcebook.sql.
+ *
+ * Usage: node scripts/generate-seed-sql.js <path-to-pdf>
+ */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

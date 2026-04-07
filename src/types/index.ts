@@ -1,3 +1,9 @@
+/**
+ * types/index.ts — Shared TypeScript interfaces
+ *
+ * Central type definitions used across components, hooks, and utilities.
+ * If you add a new data shape, define it here so the whole app can share it.
+ */
 export interface Policy {
   id: string;
   source: 'California' | 'Federal' | 'County';
@@ -35,10 +41,6 @@ export interface User {
   email: string;
   role: 'Worker' | 'Supervisor' | 'Manager' | 'Admin';
   active: boolean;
-}
-
-export interface SearchMode {
-  mode: 'summary' | 'steps';
 }
 
 export interface Citation {

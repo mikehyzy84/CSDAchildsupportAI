@@ -1,10 +1,21 @@
+/**
+ * /api/scrape-legal-docs — Web scraper for policy documents (POST)
+ *
+ * Fetches HTML from official child-support websites (CA and federal), strips
+ * navigation/chrome with Cheerio, chunks the body text, and inserts the
+ * results into `documents` + `chunks`.
+ *
+ * Connects to: Postgres via pg Client (DATABASE_URL)
+ * Auth: Bearer token checked against SCRAPER_API_KEY
+ *
+ * Gotchas:
+ *  - Uses the `pg` Client (not Neon serverless) because it was written
+ *    before the codebase standardized on @neondatabase/serverless.
+ *  - The default SOURCES list may 404 if the government sites restructure.
+ *    Pass custom sources in the request body to override.
+ */
 import { Client } from 'pg';
 import cheerio from 'cheerio';
-
-/**
- * Automated Legal Document Scraper
- * Scrapes child support policy documents from official sources and stores them in the database
- */
 
 // List of sources to scrape
 const SOURCES = [

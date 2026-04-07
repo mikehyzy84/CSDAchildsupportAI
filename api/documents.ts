@@ -1,3 +1,18 @@
+/**
+ * /api/documents — Document listing endpoint (GET)
+ *
+ * Returns every document in the `documents` table, ordered by category
+ * (California first, then Federal, then everything else). Used by the
+ * Documents page in the frontend to show the full policy library.
+ *
+ * Connects to: Neon Postgres via pg Pool (DATABASE_URL)
+ *
+ * Gotchas:
+ *  - Uses the `pg` Pool driver (not the Neon serverless client) because
+ *    this was written before the rest of the API adopted @neondatabase/serverless.
+ *    Both work fine on Vercel, but this is the only endpoint using Pool.
+ *  - Hard-capped at 1000 rows to prevent payload explosion.
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import pkg from 'pg';
 const { Pool } = pkg;

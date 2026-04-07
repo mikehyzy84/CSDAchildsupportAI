@@ -1,3 +1,9 @@
+/**
+ * Layout.tsx — Main page shell
+ *
+ * Wraps every route with a left Sidebar and bottom Footer. Child pages
+ * render into the <Outlet />. Handles the mobile hamburger menu toggle.
+ */
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';

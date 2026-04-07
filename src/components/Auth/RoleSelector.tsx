@@ -1,3 +1,10 @@
+/**
+ * RoleSelector.tsx — Login role picker modal
+ *
+ * On first load (when no user is set), shows a full-screen modal asking
+ * the user to select a role: Worker, Supervisor, Manager, or Admin.
+ * Selection sets the mock user in AuthContext.
+ */
 import { Shield, Users, Settings, Crown } from 'lucide-react';
 import { User } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';

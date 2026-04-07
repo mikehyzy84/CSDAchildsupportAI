@@ -1,3 +1,9 @@
+/**
+ * Admin.tsx — Admin page wrapper
+ *
+ * Guards the admin dashboard behind role checks. Non-admin/manager users
+ * are redirected to "/". Renders the Dashboard component for authorized users.
+ */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import Dashboard from '../components/Admin/Dashboard';

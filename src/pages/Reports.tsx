@@ -1,3 +1,13 @@
+/**
+ * Reports.tsx — Report generator
+ *
+ * Lets users select policies and a California county, then generates a
+ * structured report (via countyReportGenerator). The generated report is
+ * passed to the ReportPreview page via React Router state.
+ *
+ * Gotchas:
+ *  - Data comes entirely from mockData (samplePolicies, californiaCounties).
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, FileText, CheckSquare, MapPin, Building } from 'lucide-react';

@@ -1,3 +1,18 @@
+/**
+ * /api/elevenlabs-signed-url — Voice chat session bootstrap (POST)
+ *
+ * The frontend calls this before starting a voice conversation. It contacts
+ * the ElevenLabs API with our server-side credentials and returns a short-lived
+ * signed URL that the browser can use to open a WebSocket session — without
+ * ever seeing the API key or agent ID.
+ *
+ * Connects to: ElevenLabs REST API (ELEVENLABS_API_KEY, ELEVENLABS_AGENT_ID)
+ *
+ * Gotchas:
+ *  - Runs on the Vercel Edge Runtime (not Node), so no access to Node built-ins.
+ *  - Signed URLs expire quickly; the frontend should call this right before
+ *    connecting, not ahead of time.
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const config = {

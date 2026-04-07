@@ -1,3 +1,14 @@
+/**
+ * deploy-netlify.cjs — Manual Netlify deploy script
+ *
+ * Reads the built dist/ directory, computes SHA-1 hashes for each file,
+ * creates a Netlify deployment via their REST API, and uploads any files
+ * the CDN doesn't already have. Used when you need to deploy outside of
+ * Netlify's git integration.
+ *
+ * Requires: NETLIFY_TOKEN, NETLIFY_SITE_ID in env
+ * Usage: node deploy-netlify.cjs
+ */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');

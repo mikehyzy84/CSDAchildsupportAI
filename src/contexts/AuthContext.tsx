@@ -1,3 +1,11 @@
+/**
+ * AuthContext.tsx — Role-based authentication context
+ *
+ * Provides the current user (selected via RoleSelector modal) to the
+ * entire app through React context. Roles: Worker, Supervisor, Manager,
+ * Admin. Currently uses mock users from mockData — swap for real auth
+ * when ready.
+ */
 import { useState, useContext, createContext, ReactNode } from 'react';
 import { User } from '../types';
 import { sampleUsers } from '../data/mockData';

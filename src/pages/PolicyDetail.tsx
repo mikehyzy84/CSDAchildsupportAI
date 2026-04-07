@@ -1,3 +1,14 @@
+/**
+ * PolicyDetail.tsx — Single-policy detail view
+ *
+ * Shows the full content of a policy (looked up by :id from mockData),
+ * a citation generator (APA/MLA/Chicago), and an annotations sidebar
+ * where users can add and review notes.
+ *
+ * Gotchas:
+ *  - Policy data comes from mockData, not the database. Wire to a real
+ *    API when ready.
+ */
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Download, Share2, Calendar, Building2, FileText } from 'lucide-react';

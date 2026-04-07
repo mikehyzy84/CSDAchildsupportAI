@@ -1,3 +1,9 @@
+/**
+ * App.tsx — Root component and router
+ *
+ * Sets up React Query, the Auth context, and all page routes.
+ * The home route ("/") renders the VoiceChat page (the main AI chat).
+ */
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

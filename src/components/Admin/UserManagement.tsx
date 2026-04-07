@@ -1,5 +1,12 @@
+/**
+ * UserManagement.tsx — User CRUD panel (mock)
+ *
+ * Lists users with role badges and license counts. Supports add/edit/delete
+ * but all changes are in-memory (backed by mockData). Wire to a real
+ * user API for persistence.
+ */
 import React, { useState } from 'react';
-import { UserPlus, CreditCard as Edit2, Trash2 } from 'lucide-react';
+import { UserPlus, Pencil as EditIcon, Trash2 } from 'lucide-react';
 import { sampleUsers } from '../../data/mockData';
 import { User } from '../../types';
 
@@ -217,7 +224,7 @@ const UserManagement: React.FC = () => {
                         onClick={() => handleEditUser(user)}
                         className="text-blue-600 hover:text-blue-900"
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <EditIcon className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteUser(user.id)}

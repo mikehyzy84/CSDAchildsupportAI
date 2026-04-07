@@ -1,3 +1,11 @@
+/**
+ * process-pdfs.cjs — Batch PDF-to-SQL generator (CommonJS version)
+ *
+ * Same purpose as process-pdfs.js but uses require() syntax and
+ * subqueries to resolve document IDs by title instead of hardcoding them.
+ *
+ * Usage: node scripts/process-pdfs.cjs
+ */
 const fs = require('fs');
 const path = require('path');
 const pdf = require('pdf-parse');

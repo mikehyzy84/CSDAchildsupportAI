@@ -1,3 +1,10 @@
+/**
+ * countyReportGenerator.ts — Generates county-specific reports
+ *
+ * Given a California county, builds a structured report with legal framework,
+ * procedures, and annotated sections. Used by the Reports page to produce
+ * downloadable county summaries.
+ */
 import { CountyInfo, CountyReport } from '../types';
 
 export const generateCountyReport = (county: CountyInfo): CountyReport => {

@@ -1,6 +1,14 @@
+/**
+ * split-sql.js — Splits a large seed file into smaller parts
+ *
+ * Reads db/seed-sourcebook.sql, extracts the document INSERT and all
+ * chunk INSERTs, then splits the chunks into 4 roughly equal files
+ * (seed-part1.sql through seed-part4.sql) so they can be loaded
+ * independently without hitting psql size limits.
+ *
+ * Usage: node scripts/split-sql.js
+ */
 import fs from 'fs';
-
-// Read the original SQL file
 const sqlContent = fs.readFileSync('db/seed-sourcebook.sql', 'utf-8');
 
 // Extract the header and document insert

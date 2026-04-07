@@ -1,3 +1,9 @@
+/**
+ * Footer.tsx — Page footer
+ *
+ * Displays CSDA branding, quick links, and support contact info at the
+ * bottom of every page.
+ */
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 

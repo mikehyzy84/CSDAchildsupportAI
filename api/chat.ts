@@ -1,3 +1,20 @@
+/**
+ * /api/chat — Main AI Q&A endpoint (POST)
+ *
+ * The core of the app. Takes a user's plain-language question, searches the
+ * Neon Postgres database for relevant policy chunks via full-text search,
+ * then sends those chunks + the question to Claude (Anthropic) to produce
+ * a cited answer.
+ *
+ * Connects to: Neon Postgres (DATABASE_URL), Anthropic API (ANTHROPIC_API_KEY)
+ *
+ * Gotchas:
+ *  - Blocks questions containing SSNs or case numbers (PII filter).
+ *  - Always returns an answer, even with zero search results — the system
+ *    prompt tells Claude to use its own knowledge and suggest better searches.
+ *  - Logs every Q&A pair to the `chats` table; if logging fails the user
+ *    still gets their answer (fire-and-forget).
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Anthropic from '@anthropic-ai/sdk';
 import { neon } from '@neondatabase/serverless';

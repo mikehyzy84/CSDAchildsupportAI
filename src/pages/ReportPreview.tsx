@@ -1,3 +1,10 @@
+/**
+ * ReportPreview.tsx — Report preview and download
+ *
+ * Receives a generated report (policies + county report) from Reports.tsx
+ * via React Router location state. Renders a printable preview with
+ * bibliography and county details, and offers a "download" action.
+ */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, FileText, ArrowLeft, Calendar, Building2, MapPin, Users, Briefcase } from 'lucide-react';

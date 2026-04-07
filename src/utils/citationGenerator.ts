@@ -1,3 +1,9 @@
+/**
+ * citationGenerator.ts — APA / MLA / Chicago citation formatter
+ *
+ * Takes a Policy object and produces a formatted citation string in the
+ * requested academic style. Used by PolicyDetail and ReportPreview pages.
+ */
 import { Policy } from '../types';
 
 export const generateCitation = (policy: Policy, format: 'apa' | 'mla' | 'chicago' = 'apa'): string => {

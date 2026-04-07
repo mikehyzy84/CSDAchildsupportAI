@@ -1,3 +1,10 @@
+/**
+ * Sidebar.tsx — Left navigation panel
+ *
+ * Shows nav links (Ask CSDAI, Documents, Reports, Admin), a "New Chat"
+ * button, chat history stubs, and the current user profile. Collapsible
+ * on mobile via props from Layout.
+ */
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MessageSquare, FileText, Settings, Plus, Bot } from 'lucide-react';

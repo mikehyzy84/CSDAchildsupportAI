@@ -1,3 +1,14 @@
+/**
+ * ingest-pdf.js — Direct PDF-to-database ingestion
+ *
+ * Unlike the other scripts that generate SQL files, this one writes
+ * directly to the Neon Postgres database. Chunks text into ~500-token
+ * pieces and inserts both the document record and its chunks. The
+ * database trigger auto-generates search vectors.
+ *
+ * Usage: node scripts/ingest-pdf.js <path-to-pdf>
+ * Requires: DATABASE_URL in .env
+ */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

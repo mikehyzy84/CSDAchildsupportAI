@@ -1,3 +1,17 @@
+/**
+ * /api/admin — Analytics dashboard data (GET)
+ *
+ * Powers the Admin → Analytics tab. Returns search counts (today / week /
+ * month), top-10 questions from the last 30 days, daily activity for the
+ * past week, positive/negative feedback totals, and the last document-sync
+ * timestamp.
+ *
+ * Connects to: Neon Postgres (DATABASE_URL)
+ *
+ * Gotchas:
+ *  - No authentication — anyone who can reach this URL gets analytics.
+ *    Add auth before exposing to the public internet.
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 

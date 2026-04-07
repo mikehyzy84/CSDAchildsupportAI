@@ -14,33 +14,7 @@ AI-powered policy reference system for California child support professionals. C
 
 ## Project Structure
 
-```
-├── api/                  # Vercel serverless functions
-│   ├── chat.ts           # Main AI chat endpoint (Anthropic + Neon)
-│   ├── documents.ts      # Document listing endpoint
-│   ├── feedback.ts       # Thumbs-up/down feedback
-│   ├── admin.ts          # Analytics dashboard data
-│   ├── sync.ts           # Scheduled sync stub (Vercel cron)
-│   ├── elevenlabs-signed-url.ts  # Voice chat signed URL
-│   ├── scrape-legal-docs.js      # Legal document scraper
-│   └── admin/
-│       └── ingest-missing-docs.js
-├── db/
-│   ├── schema.sql        # Full database schema
-│   └── seed-*.sql        # Seed data files
-├── scripts/              # PDF ingestion & SQL generation utilities
-├── src/                  # React frontend
-│   ├── components/       # UI components
-│   ├── contexts/         # Auth context
-│   ├── hooks/            # Custom hooks (search, annotations)
-│   ├── pages/            # Route pages
-│   ├── styles/           # California theme CSS
-│   ├── types/            # TypeScript types
-│   └── utils/            # Citation generator, search engine, reports
-├── server.js             # Legacy local Express dev server (not used in production)
-├── vercel.json           # Vercel routing & cron config
-└── .env.example          # All required environment variables
-```
+See [STRUCTURE.md](STRUCTURE.md) for a full annotated tree of every folder and file.
 
 ## Prerequisites
 
@@ -113,6 +87,86 @@ npx vercel dev
 3. Add the environment variables from `.env.example` in the Vercel dashboard under **Settings → Environment Variables**.
 4. Vercel automatically detects the Vite config and deploys the frontend + `/api` serverless functions.
 5. The daily sync cron is configured in `vercel.json`.
+
+## API Endpoints
+
+All endpoints are Vercel serverless functions in the `/api` directory.
+
+### `POST /api/chat`
+
+Main AI Q&A endpoint. Searches the database for relevant policy chunks, sends them to Claude, and returns a cited answer.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `question` | string | Yes | The user's question in plain language |
+| `sessionId` | string | Yes | Browser session identifier |
+| `userEmail` | string | No | User's email for logging |
+| `responseType` | `"summary"` \| `"detailed"` | No | Controls answer length (default: `"summary"`) |
+
+**Returns:** `{ answer, citations: [{id, title, section, source, url}], sessionId }`
+
+**Notes:** Blocks questions containing SSNs or case numbers. Always returns an answer, even with zero search results.
+
+---
+
+### `GET /api/documents`
+
+Lists all policy documents.
+
+**Returns:** `{ documents: [{id, title, category, source, url}], count }`
+
+---
+
+### `POST /api/feedback`
+
+Records thumbs-up/down on a chat response.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `chatId` | string | Yes | The chat record UUID |
+| `feedback` | `"good"` \| `"bad"` | Yes | User's rating |
+
+**Returns:** `{ success: true }` or `404` if chat not found.
+
+---
+
+### `GET /api/admin`
+
+Returns analytics data for the admin dashboard. **No auth** — protect before public deployment.
+
+**Returns:** `{ total_chats_today, total_chats_week, total_chats_month, count_good_feedback, count_bad_feedback, top_questions, user_activity, last_sync_timestamp }`
+
+---
+
+### `POST /api/elevenlabs-signed-url`
+
+Generates a short-lived signed URL for ElevenLabs voice chat. The frontend calls this before opening a WebSocket connection.
+
+**Returns:** `{ signedUrl }` — pass this to `conversation.startSession({ signedUrl })`.
+
+---
+
+### `POST /api/scrape-legal-docs`
+
+Scrapes policy content from .gov websites and inserts into the database. Requires `Authorization: Bearer <SCRAPER_API_KEY>` header.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `sources` | array | No | Custom URLs to scrape (defaults to CA + federal sites) |
+
+**Returns:** `{ message, results: { success, failed, totalDocuments, totalChunks } }`
+
+---
+
+### `GET /api/sync` | `POST /api/sync`
+
+Scheduled sync endpoint (stub). Called daily by Vercel cron. Currently returns a placeholder.
+
+---
+
+### `POST /api/admin/ingest-missing-docs`
+
+One-shot PDF ingestion. Downloads a hardcoded federal PDF, extracts text, and inserts into the database. **No auth** — designed to be called once then removed.
 
 ## Scripts
 

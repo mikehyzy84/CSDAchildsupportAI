@@ -1,3 +1,15 @@
+/**
+ * /api/feedback — Thumbs-up / thumbs-down feedback (POST)
+ *
+ * After the AI answers a question, the user can rate it "good" or "bad".
+ * This endpoint writes that rating to the `chats.feedback` column so we
+ * can track answer quality over time (see /api/admin for aggregates).
+ *
+ * Connects to: Neon Postgres (DATABASE_URL)
+ *
+ * Expects: { chatId: string, feedback: "good" | "bad" }
+ * Returns: { success: true } or 404 if chatId not found
+ */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 

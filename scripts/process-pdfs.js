@@ -1,3 +1,17 @@
+/**
+ * process-pdfs.js — Batch PDF-to-SQL generator (ES module version)
+ *
+ * Reads three sample PDFs (Policy_Sample, Procedure_Sample1/2), chunks
+ * the text into ~2000-char pieces, and writes SQL INSERT statements to
+ * db/seed-new-docs.sql. Document IDs start at 1000 to avoid conflicts
+ * with existing seed data.
+ *
+ * Usage: node scripts/process-pdfs.js
+ *
+ * Gotchas:
+ *  - There is also a CommonJS twin (process-pdfs.cjs) that does the same
+ *    thing but uses subqueries instead of hardcoded IDs.
+ */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

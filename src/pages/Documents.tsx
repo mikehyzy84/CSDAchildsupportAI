@@ -1,3 +1,11 @@
+/**
+ * Documents.tsx — Policy document browser
+ *
+ * Fetches the full document list from GET /api/documents and renders a
+ * searchable, filterable grid grouped by category (California / Federal).
+ *
+ * Connects to: /api/documents
+ */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, ExternalLink, Search } from 'lucide-react';

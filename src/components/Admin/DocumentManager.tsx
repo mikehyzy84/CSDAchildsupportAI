@@ -1,3 +1,10 @@
+/**
+ * DocumentManager.tsx — Document upload & annotation approval
+ *
+ * Shows all policies from mockData, lets managers upload new documents
+ * (stub), and surfaces pending annotations for approval/rejection.
+ * Only usable by Manager/Admin roles.
+ */
 import React, { useState } from 'react';
 import { Upload, FileText, Check, X, AlertCircle } from 'lucide-react';
 import { samplePolicies } from '../../data/mockData';

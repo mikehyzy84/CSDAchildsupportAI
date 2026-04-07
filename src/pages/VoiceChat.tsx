@@ -1,3 +1,17 @@
+/**
+ * VoiceChat.tsx — Main AI chat page (home route "/")
+ *
+ * The primary user-facing page. Connects to ElevenLabs via a signed URL
+ * (fetched from /api/elevenlabs-signed-url) for voice + text chat. Users
+ * can type or use push-to-talk. Messages render in a scrollable thread.
+ *
+ * Connects to: /api/elevenlabs-signed-url (session bootstrap)
+ *
+ * Gotchas:
+ *  - Auto-connects on mount; if the signed-URL fetch fails the UI shows
+ *    a "Disconnected" state (no error modal).
+ *  - Push-to-talk uses startPTT/endPTT, not continuous listening.
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import {

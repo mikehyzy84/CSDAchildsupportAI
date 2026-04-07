@@ -1,3 +1,10 @@
+/**
+ * useAnnotations.ts — Annotation CRUD hook
+ *
+ * Manages in-memory annotations (add, approve, reject) filtered by policy
+ * and user role. Currently backed by mockData — wire to a real API for
+ * persistence.
+ */
 import { useState, useCallback } from 'react';
 import { Annotation } from '../types';
 import { sampleAnnotations } from '../data/mockData';

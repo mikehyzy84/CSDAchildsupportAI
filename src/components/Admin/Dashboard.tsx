@@ -1,3 +1,10 @@
+/**
+ * Dashboard.tsx — Admin dashboard container
+ *
+ * Tabbed interface with three panels: Analytics (live from /api/admin),
+ * User Management (mock CRUD), and Document Manager (upload + annotation
+ * approval). Only accessible to Manager/Admin roles.
+ */
 import React, { useState } from 'react';
 import Analytics from './Analytics';
 import UserManagement from './UserManagement';

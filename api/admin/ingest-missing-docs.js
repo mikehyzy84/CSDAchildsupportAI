@@ -1,7 +1,19 @@
+/**
+ * /api/admin/ingest-missing-docs — One-shot PDF ingestion (POST)
+ *
+ * Downloads a specific federal PDF (Essentials for Attorneys Ch. 14),
+ * extracts text with pdf-parse, chunks it, and inserts into the database.
+ * Designed to be called once and then deleted.
+ *
+ * Connects to: Neon Postgres (DATABASE_URL), remote PDF over HTTPS
+ *
+ * Gotchas:
+ *  - The PDF URL is hardcoded; update MISSING_DOCS to ingest different files.
+ *  - No auth check — add one before deploying publicly.
+ */
 const { neon } = require('@neondatabase/serverless');
 const pdf = require('pdf-parse');
 
-// Initialize Neon client
 const sql = neon(process.env.DATABASE_URL);
 
 // Hardcoded URLs for missing documents

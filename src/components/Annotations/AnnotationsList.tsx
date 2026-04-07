@@ -1,3 +1,10 @@
+/**
+ * AnnotationsList.tsx — Displays annotations for a policy
+ *
+ * Renders a list of annotations with status badges. Filters by the
+ * current user's role: Workers see only their own and approved ones;
+ * Managers/Admins see everything including pending items.
+ */
 import React from 'react';
 import { MessageSquare, User, Clock, Check, AlertCircle } from 'lucide-react';
 import { Annotation } from '../../types';

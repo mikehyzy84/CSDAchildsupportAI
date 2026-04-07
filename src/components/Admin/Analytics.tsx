@@ -1,3 +1,12 @@
+/**
+ * Analytics.tsx — System analytics panel
+ *
+ * Fetches live data from GET /api/admin and renders KPI cards (searches
+ * today/week/month), top-10 questions, daily activity chart, and feedback
+ * ratios. Shown inside the Admin Dashboard.
+ *
+ * Connects to: /api/admin
+ */
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Search, Users, Activity, Loader2, AlertCircle } from 'lucide-react';
 

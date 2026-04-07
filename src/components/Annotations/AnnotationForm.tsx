@@ -1,3 +1,10 @@
+/**
+ * AnnotationForm.tsx — Create-annotation form
+ *
+ * Lets a user highlight text in a policy and attach a note. Supports
+ * three annotation types: Personal (auto-approved), Team Shared, and
+ * Knowledge Base (both require manager approval).
+ */
 import React, { useState } from 'react';
 import { MessageSquare, X, Check } from 'lucide-react';
 import { useAnnotations } from '../../hooks/useAnnotations';

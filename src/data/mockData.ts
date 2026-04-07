@@ -1,3 +1,11 @@
+/**
+ * mockData.ts — Seed / demo data for local development
+ *
+ * Provides sample policies, users, annotations, analytics, and California
+ * county info. Used by AuthContext (mock users), PolicyDetail, Reports,
+ * Admin panels, and anywhere that needs realistic placeholder data before
+ * the database is connected.
+ */
 import { Policy, SearchQuery, Annotation, User, Analytics } from '../types';
 
 export const samplePolicies: Policy[] = [
