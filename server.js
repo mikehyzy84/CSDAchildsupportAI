@@ -7,7 +7,7 @@ const port = 3001;
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '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',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 app.use(cors());
